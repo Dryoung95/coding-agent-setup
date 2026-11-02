@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#159b73" />
+  <meta name="description" content="沐曦 Coding Agent 配置中心：10 分钟内把模力方舟 Token 接入 Codex / Claude Code / OpenCode，含新手分步向导、环境自检与排错手册。" />
+  <title>沐曦 Coding Agent 配置中心 · 新手版</title>
+  <style>
+    :root { --green:#159b73; --green-dark:#087452; --green-soft:#e8f6f0; --purple:#7356c9; --purple-dark:#563ba8; --ink:#16181d; --muted:#6b7078; --line:#e5e4ea; --paper:#fff; --lavender:#f3f1fa; --warn:#b4530a; --warn-bg:#fff7ed; --danger:#c0392b; --danger-bg:#fef3f2; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:96px; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    body:before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.32; background-image:linear-gradient(115deg,transparent 0 49%,rgba(0,0,0,.035) 49.2% 49.6%,transparent 49.8%),linear-gradient(25deg,transparent 0 74%,rgba(0,0,0,.025) 74.2% 74.5%,transparent 74.8%); background-size:180px 180px; z-index:0; }
+    a { color:inherit; }
+    code, kbd { font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; }
+
+    /* ---------- banner ---------- */
+    .banner-mobile { display:none; padding:11px 5vw; color:#fff; background:var(--warn); font-size:13px; font-weight:650; line-height:1.6; }
+    body.is-mobile .banner-mobile { display:block; }
+
+    /* ---------- nav ---------- */
+    .nav { position:sticky; top:0; z-index:10; height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 5vw; background:rgba(247,247,243,.92); border-bottom:1px solid rgba(22,24,29,.08); backdrop-filter:blur(14px); }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.03em; text-decoration:none; }
+    .brand-mark { width:36px; height:36px; display:grid; place-items:center; color:#fff; background:var(--green); clip-path:polygon(0 0,100% 0,100% 72%,72% 100%,0 100%); font-weight:900; font-size:17px; }
+    .brand small { display:block; margin-top:2px; color:var(--muted); font:500 10px/1.2 ui-monospace,monospace; letter-spacing:.1em; }
+    .navlinks { display:flex; align-items:center; gap:24px; color:#555b64; font-size:13px; font-weight:650; }
+    .navlinks a { text-decoration:none; }
+    .navlinks a:hover { color:var(--green); }
+    .nav-cta { padding:11px 16px; color:#fff; background:var(--purple-dark); border-radius:3px; }
+    .nav-cta:hover { color:#fff!important; background:var(--purple); }
+
+    .wrap { width:min(1180px,90vw); margin:auto; }
+    .hero { padding:82px 0 64px; position:relative; z-index:1; }
+    .hero > div:first-child { max-width:850px; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; color:var(--green); font:800 11px/1 ui-monospace,monospace; letter-spacing:.16em; text-transform:uppercase; }
+    .eyebrow:before { content:""; width:25px; height:2px; background:var(--green); }
+    h1 { max-width:760px; margin:23px 0 20px; font-size:clamp(40px,6vw,78px); line-height:.99; letter-spacing:-.07em; font-weight:900; }
+    h1 em { color:var(--green); font-style:normal; }
+    .hero-copy { max-width:600px; color:#5e636b; font-size:17px; line-height:1.75; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:30px; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:45px; padding:0 17px; border:1px solid var(--ink); border-radius:3px; font-weight:750; font-size:13px; text-decoration:none; cursor:pointer; transition:.2s ease; background:transparent; color:var(--ink); font-family:inherit; }
+    .button.primary { color:#fff; border-color:var(--green); background:var(--green); box-shadow:4px 4px 0 #d5ccef; }
+    .button.primary:hover { background:var(--green-dark); transform:translate(-1px,-1px); }
+    .button.ghost:hover { color:#fff; background:var(--ink); }
+    .button.purple { color:#fff; border-color:var(--purple-dark); background:var(--purple-dark); }
+    .button.purple:hover { background:var(--purple); }
+    .button[disabled] { opacity:.55; cursor:not-allowed; transform:none!important; }
+    .button.sm { min-height:36px; padding:0 12px; font-size:12px; }
+
+    /* ---------- stats ---------- */
+    .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border-block:1px solid var(--line); position:relative; z-index:1; }
+    .stat { padding:27px 30px; background:var(--paper); }
+    .stat strong { display:block; margin-bottom:4px; font-size:25px; letter-spacing:-.05em; }
+    .stat span { color:var(--muted); font-size:12px; line-height:1.5; display:block; }
+
+    /* ---------- roadmap ---------- */
+    .roadmap { background:#fbfbf9; border-bottom:1px solid var(--line); padding:26px 0; position:relative; z-index:1; }
+    .roadmap-inner { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .roadmap-title { margin:0 18px 0 0; font:800 11px ui-monospace,monospace; letter-spacing:.14em; color:var(--purple); text-transform:uppercase; }
+    .rstep { display:flex; align-items:center; gap:8px; padding:8px 13px; border:1px solid #dedfdb; border-radius:100px; background:#fff; font-size:12px; font-weight:700; color:#4c5158; text-decoration:none; transition:.18s; white-space:nowrap; }
+    .rstep:hover { border-color:var(--green); color:var(--green-dark); }
+    .rstep i { display:grid; place-items:center; width:18px; height:18px; border-radius:50%; background:#eceef0; color:#7a7f86; font:800 10px ui-monospace,monospace; font-style:normal; }
+    .rstep.done { border-color:var(--green); background:var(--green-soft); color:var(--green-dark); }
+    .rstep.done i { background:var(--green); color:#fff; }
+    .rstep.done i:after { content:"✓"; }
+    .rstep.done i span { display:none; }
+    .rsep { width:14px; height:1px; background:#d8d9d5; flex:0 0 auto; }
+
+    /* ---------- env bar ---------- */
+    .env-bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; margin-top:14px; padding:13px 16px; border:1px dashed #cfd1cc; border-radius:3px; background:#fcfcfa; font-size:12px; color:#5c6169; }
+    .env-bar b { color:var(--ink); }
+    .env-bar .tag { padding:3px 9px; border-radius:100px; background:var(--green-soft); color:var(--green-dark); font-weight:750; font-size:11px; }
+    .env-bar .tag.gray { background:#eef0f2; color:#666b72; }
+    .env-bar .tag.warn { background:var(--warn-bg); color:var(--warn); }
+
+    /* ---------- section ---------- */
+    .section { padding:78px 0; position:relative; z-index:1; }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:30px; margin-bottom:28px; }
+    .section-kicker { color:var(--purple); font:800 11px ui-monospace,monospace; letter-spacing:.15em; }
+    h2 { margin:10px 0 0; font-size:clamp(27px,3.8vw,45px); line-height:1.05; letter-spacing:-.055em; }
+    .section-note { max-width:420px; margin:0; color:var(--muted); font-size:14px; line-height:1.7; }
+    .section-note b { color:var(--ink); }
+    .callout { display:flex; gap:12px; margin:0 0 22px; padding:15px 18px; border-left:3px solid var(--green); background:var(--green-soft); font-size:13px; line-height:1.7; color:#25554a; }
+    .callout.warn { border-left-color:var(--warn); background:var(--warn-bg); color:#7c3a05; }
+    .callout.warn b { color:var(--warn); }
+    .callout svg { flex:0 0 auto; margin-top:2px; }
+    /* manualNote 的内容是整段 HTML（含 <code>），而 .callout 是 flex 容器，
+       会把每个内联元素当成 flex item 拆成一列 —— 关掉 flex 才读得下去。 */
+    #manualNote { display:block; }
+
+    /* ---------- cards ---------- */
+    .panel { border:1px solid #dddeda; background:#fff; }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; padding:18px 21px; border-bottom:1px solid var(--line); gap:12px; }
+    .panel-head h3 { margin:0; font-size:15px; letter-spacing:-.02em; }
+    .step { color:var(--purple); font:800 11px ui-monospace,monospace; white-space:nowrap; }
+    .panel-body { padding:22px; }
+    label { display:block; margin-bottom:8px; color:#383c43; font-size:12px; font-weight:750; }
+    input,select { width:100%; height:46px; padding:0 13px; border:1px solid #d9dbd7; outline:0; border-radius:2px; color:var(--ink); background:#fbfbf9; font:500 14px Inter,"Microsoft YaHei",sans-serif; font-family:Inter,"Microsoft YaHei",sans-serif; }
+    input:focus,select:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(21,155,115,.12); }
+    .field { margin-bottom:19px; }
+    .hint { margin:7px 0 0; color:#8a8e93; font-size:11px; line-height:1.6; }
+    .hint a { color:var(--green-dark); font-weight:700; }
+    .hint code { background:#f1f2ef; padding:1px 5px; border-radius:2px; font-size:11px; }
+    /* 令牌安全说明：给「怎么管」而不是「请注意」 */
+    .keysafe { margin-top:16px; padding:14px 16px; background:#f4f8f5; border:1px solid #d8e8de; border-left:3px solid var(--green); border-radius:0 3px 3px 0; }
+    .keysafe > b { display:block; font-size:12px; margin-bottom:9px; color:#1c5c40; letter-spacing:.01em; }
+    .keysafe ol { margin:0; padding-left:16px; color:#4a5a51; font-size:11.5px; line-height:1.85; }
+    .keysafe li + li { margin-top:5px; }
+    .keysafe code { background:#e4efe8; color:#1c5c40; padding:1px 5px; border-radius:2px; font-size:11px; }
+    .keysafe a { color:var(--green-dark); font-weight:700; }
+    .secret-wrap { position:relative; }
+    .secret-wrap input { padding-right:70px; }
+    .toggle-secret { position:absolute; top:0; right:0; width:55px; height:46px; border:0; color:#757a82; background:transparent; cursor:pointer; font-size:11px; font-weight:700; font-family:inherit; }
+    .model-card { display:flex; align-items:center; gap:13px; margin-top:11px; padding:14px; border:1px solid #e1e2de; background:#fcfcfa; }
+    .model-card b { display:block; margin:0; color:var(--ink); font:700 16px/1.2 "SFMono-Regular",Consolas,monospace; letter-spacing:-.02em; word-break:break-all; }
+    .model-card span { display:block; margin-top:5px; color:#657084; font-size:13px; line-height:1.35; }
+    .tool-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .tool-option { position:relative; }
+    .tool-option input { position:absolute; opacity:0; pointer-events:none; }
+    .tool-option label { display:flex; align-items:center; justify-content:center; min-height:51px; margin:0; border:1px solid #d9dbd7; border-radius:2px; color:#60656d; background:#fbfbf9; cursor:pointer; font-size:13px; }
+    .tool-option input:checked + label { border-color:var(--purple); color:var(--purple-dark); background:#f8f6ff; box-shadow:inset 0 -2px 0 var(--purple); }
+
+    /* ---------- preview ---------- */
+    .builder { display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; }
+    .preview { position:sticky; top:93px; }
+    .preview-window { overflow:hidden; border:1px solid #242830; background:#1e2229; }
+    .window-bar { display:flex; align-items:center; gap:6px; height:35px; padding:0 13px; background:#292e36; }
+    .window-dot { width:8px; height:8px; border-radius:50%; background:#e35e65; }.window-dot:nth-child(2){background:#edc04f}.window-dot:nth-child(3){background:#69bc74}
+    .window-title { margin-left:8px; color:#89919b; font:10px ui-monospace,monospace; }
+    pre { min-height:290px; max-height:420px; overflow:auto; margin:0; padding:20px; color:#dbe7e8; font:12px/1.75 "SFMono-Regular",Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .json-key,.t-key { color:#bd9bff; }.json-string,.t-str { color:#a9e8c9; }.json-bool,.t-bool { color:#78c5ef; }.t-section { color:#f0b46b; font-weight:700; }
+    .preview-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:15px 18px; background:#fff; border:1px solid #dddeda; border-top:0; flex-wrap:wrap; }
+    .status { display:flex; align-items:center; gap:7px; color:#5e646b; font-size:11px; }.status i { width:7px; height:7px; border-radius:50%; background:#50ae6b; flex:0 0 auto; }
+    .status.shield { color:#1c6b46; background:#e9f6ef; border:1px solid #cbe8da; border-radius:99px; padding:5px 11px; font-weight:700; }
+    .preview-footer .button { min-height:36px; padding:0 12px; font-size:12px; }
+
+    /* ---------- files / paths ---------- */
+    .filebox { margin-top:16px; border:1px solid var(--line); border-radius:3px; background:#fcfcfa; }
+    .filebox-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 14px; border-bottom:1px solid var(--line); font-size:12px; font-weight:750; color:#3c4148; }
+    .pathrow { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; border-bottom:1px dashed #e8e9e5; font-size:12px; }
+    .pathrow:last-child { border-bottom:0; }
+    .pathrow .role { color:var(--muted); flex:0 0 auto; }
+    .pathrow code { flex:1; color:#1c4f42; background:#f0f3f1; padding:4px 8px; border-radius:2px; font-size:11.5px; word-break:break-all; cursor:pointer; }
+    .pathrow code:hover { background:var(--green-soft); }
+    .minibtn { border:1px solid #d9dbd7; background:#fff; border-radius:2px; padding:5px 10px; font-size:11px; font-weight:700; cursor:pointer; color:#5a5f66; font-family:inherit; white-space:nowrap; }
+    .minibtn:hover { border-color:var(--green); color:var(--green-dark); }
+
+    /* ---------- cli ---------- */
+    .cli-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; }
+    .cli-card { display:flex; flex-direction:column; padding:23px; border:1px solid #d9dad4; background:var(--paper); }
+    .cli-card .cli-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+    .cli-card .cli-head .tool-icon { color:var(--green); font:800 22px ui-monospace,monospace; }
+    .cli-card .cli-head .ver { color:#90949a; font:10px ui-monospace,monospace; }
+    .cli-card h3 { margin:0 0 7px; font-size:17px; }
+    .cli-card p { flex:0 0 auto; margin:0 0 14px; color:var(--muted); font-size:12px; line-height:1.55; }
+    .cli-cmd { position:relative; background:#1e2229; border-radius:3px; padding:11px 13px 12px; margin-bottom:9px; transition:.2s; }
+    .cli-cmd .os { display:block; margin-bottom:4px; color:#89919b; font:700 10px/1.2 ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .cli-cmd code { display:block; color:#a9e8c9; font:12px/1.6 "SFMono-Regular",Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; cursor:pointer; padding-right:34px; }
+    .cli-cmd code:hover { color:#c4f5da; }
+    .cli-cmd .copyic { position:absolute; right:8px; bottom:9px; color:#7d858f; font-size:11px; pointer-events:none; }
+    body[data-os="win"] .cli-cmd.dim, body[data-os="mac"] .cli-cmd.dim, body[data-os="linux"] .cli-cmd.dim { opacity:.4; }
+    body[data-os="win"] .cli-cmd.hot, body[data-os="mac"] .cli-cmd.hot, body[data-os="linux"] .cli-cmd.hot { box-shadow:0 0 0 2px var(--green); }
+    .cli-cmd.hot .os { color:#7fe0b6; }
+    .cli-tip { margin-top:auto; padding-top:6px; color:#90949a; font-size:11px; line-height:1.5; }
+    .cli-tip b { color:var(--green-dark); }
+
+    /* ---------- downloads ---------- */
+    .downloads { background:#fbfbf9; border-block:1px solid var(--line); }
+    .download-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; }
+    .download-card { display:flex; flex-direction:column; min-height:200px; padding:23px; border:1px solid #d9dad4; background:var(--paper); }
+    .download-card .platform { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }.platform-icon { color:var(--green); font:800 25px ui-monospace,monospace; }.version { color:#90949a; font:10px ui-monospace,monospace; }
+    .download-card h3 { margin:0 0 7px; font-size:17px; }.download-card p { flex:1; margin:0 0 17px; color:var(--muted); font-size:12px; line-height:1.55; }.download-card a { color:var(--green-dark); font-size:12px; font-weight:800; text-decoration:none; }.download-card a:hover { text-decoration:underline; }
+    .download-card .alt { display:block; margin-top:8px; color:#90949a; font-size:11px; font-weight:600; }
+
+    /* ---------- steps ---------- */
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .step-card { padding:23px; border-top:3px solid var(--purple); background:#fff; border-inline:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .step-card b { display:block; margin-bottom:17px; color:var(--green); font:800 11px ui-monospace,monospace; }
+    .step-card h3 { margin:0 0 9px; font-size:16px; }
+    .step-card p { margin:0; color:var(--muted); font-size:12px; line-height:1.65; }
+
+    /* ---------- faq ---------- */
+    .faq { display:grid; gap:9px; }
+    details.qa { border:1px solid #dddeda; background:#fff; }
+    details.qa summary { cursor:pointer; padding:15px 18px; font-size:13.5px; font-weight:750; color:#252a31; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    details.qa summary::-webkit-details-marker { display:none; }
+    details.qa summary:after { content:"+"; color:var(--purple); font:800 17px ui-monospace,monospace; flex:0 0 auto; }
+    details.qa[open] summary:after { content:"–"; }
+    details.qa .qa-body { padding:0 18px 17px; color:#5a6068; font-size:13px; line-height:1.75; }
+    details.qa .qa-body code { background:#f1f2ef; padding:1px 5px; border-radius:2px; font-size:12px; color:#1c4f42; word-break:break-all; }
+    details.qa .qa-body ul { margin:8px 0; padding-left:19px; }
+    details.qa .qa-body li { margin-bottom:5px; }
+    details.qa .qa-body b { color:var(--ink); }
+
+    .sources { padding:30px 0 60px; color:#85898e; font-size:11px; line-height:1.8; position:relative; z-index:1; }
+    .sources a { color:#6f747a; } .sources strong { color:#4a4f56; }
+    footer { padding:24px 0; color:#81868d; border-top:1px solid var(--line); font-size:11px; position:relative; z-index:1; }
+    .footer-inner { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+
+    .toast { position:fixed; right:26px; bottom:26px; z-index:30; max-width:330px; padding:14px 17px; border-left:3px solid var(--green); color:#fff; background:#20242b; box-shadow:0 8px 30px rgba(0,0,0,.18); font-size:12px; line-height:1.6; transform:translateY(20px); opacity:0; pointer-events:none; transition:.25s ease; }
+    .toast.show { opacity:1; transform:none; }
+    .toast.err { border-left-color:#e35e65; }
+
+    #toTop { position:fixed; right:26px; bottom:26px; z-index:25; width:42px; height:42px; border:1px solid #d5d7d3; border-radius:50%; background:#fff; color:#5c6169; cursor:pointer; display:grid; place-items:center; font-size:15px; box-shadow:0 3px 14px rgba(0,0,0,.08); opacity:0; pointer-events:none; transition:.25s; transform:translateY(10px); }
+    #toTop.show { opacity:1; pointer-events:auto; transform:none; }
+    #toTop:hover { color:var(--green-dark); border-color:var(--green); }
+
+    .sec-anchor { display:block; height:0; visibility:hidden; }
+
+    @media (max-width:900px) {
+      .nav { padding:0 5vw; } .navlinks a:not(.nav-cta) { display:none; }
+      .hero { padding-top:48px; }
+      .builder { grid-template-columns:1fr; } .preview { position:static; }
+      .download-grid,.cli-grid,.steps { grid-template-columns:1fr; }
+      .section { padding:56px 0; }
+      .section-head { display:block; } .section-note { margin-top:15px; }
+      .roadmap-inner { overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px; }
+      .roadmap-title { display:none; }
+    }
+    @media (max-width:520px) {
+      h1 { font-size:40px; }
+      .stats { grid-template-columns:1fr; } .stat { padding:18px 22px; }
+      .tool-grid { grid-template-columns:1fr; } .panel-body { padding:17px; }
+      .preview-footer { align-items:flex-start; flex-direction:column; }
+      .footer-inner span { display:block; margin-top:7px; }
+      .toast { left:16px; right:16px; max-width:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="banner-mobile">⚠️ 检测到你在手机上打开本页。CLI 与 CC Switch 只能装在电脑上，请改用 <b>Windows / macOS / Linux 电脑</b>打开，配置才能生效。</div>
+
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="沐曦 Coding Agent 配置中心"><span class="brand-mark">M</span><span>沐曦 / CODING AGENT<small>METAX CONFIG LAB</small></span></a>
+    <nav class="navlinks">
+      <a href="#step-token">① 拿 Token</a>
+      <a href="#install-cli">② 装 CLI</a>
+      <a href="#downloads">③ 装 CC Switch</a>
+      <a href="#builder">④ 生成配置</a>
+      <a href="#verify">⑤ 验证</a>
+      <a class="nav-cta" href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">获取 Token ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="wrap hero">
+      <div>
+        <div class="eyebrow">METAX · 曦云 C 系列</div>
+        <h1>让国产算力，<br><em>直接进入</em>你的代码。</h1>
+        <p class="hero-copy">沐曦专属 Coding Agent 配置中心。把你的模力方舟访问令牌接进来，在熟悉的开发工具里直接调用编程模型。<b>本页按「六步」组织，完全没用过命令行的同学从上往下照着做即可。</b></p>
+        <div class="hero-actions">
+          <a class="button primary" href="#step-token">从第一步开始 <span>↓</span></a>
+          <a class="button ghost" href="#faq">我卡住了 / 报错了</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="stats">
+      <div class="stat wrap-stat"><strong>6 步</strong><span>拿 Token → 装 CLI → 装 CC Switch → 生成配置 → 验证 → 交给课程项目</span></div>
+      <div class="stat"><strong>3 种工具</strong><span>Codex / Claude Code / OpenCode，一次配置可复用</span></div>
+      <div class="stat"><strong>100% 本地</strong><span>密钥只在浏览器里参与生成，不会上传到任何服务器</span></div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="roadmap">
+      <div class="wrap">
+        <div class="roadmap-inner">
+          <p class="roadmap-title">新手路线图</p>
+          <a class="rstep" data-key="t1" href="#step-token"><i><span>1</span></i> 拿 Token</a>
+          <span class="rsep"></span>
+          <a class="rstep" data-key="t2" href="#install-cli"><i><span>2</span></i> 装 CLI</a>
+          <span class="rsep"></span>
+          <a class="rstep" data-key="t3" href="#downloads"><i><span>3</span></i> 装 CC Switch</a>
+          <span class="rsep"></span>
+          <a class="rstep" data-key="t4" href="#builder"><i><span>4</span></i> 生成并导入配置</a>
+          <span class="rsep"></span>
+          <a class="rstep" data-key="t5" href="#verify"><i><span>5</span></i> 验证能对话</a>
+          <span class="rsep"></span>
+          <a class="rstep" data-key="t6" href="#course-projects"><i><span>6</span></i> 用课程项目</a>
+        </div>
+        <div class="env-bar" id="envBar">
+          <span>当前环境：<b id="envOs">检测中…</b></span>
+          <span class="tag gray" id="envHintTag">加载中</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1 : TOKEN -->
+    <span class="sec-anchor" id="step-token"></span>
+    <section class="wrap section">
+      <div class="section-head">
+        <div><div class="section-kicker">STEP 01 / GET TOKEN</div><h2>先拿到属于你的 Token</h2></div>
+        <p class="section-note">没有 Token，后面全白搭。这一步只需要登录并生成一个访问令牌。</p>
+      </div>
+
+      <div class="callout">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 1.5 12.4 7l5.9.5-4.5 3.9 1.4 5.8L10 14.1 4.8 17.2l1.4-5.8L1.7 7.5 7.6 7z" fill="#159b73"/></svg>
+        <div>只有两件事要做：<b>① 登录模力方舟 → ② 生成一个访问令牌</b>。令牌生成后复制好，下一步就要用到。</div>
+      </div>
+
+      <div class="steps" style="grid-template-columns:repeat(2,1fr)">
+        <article class="step-card">
+          <b>1 — 登录</b>
+          <h3>打开模力方舟并登录</h3>
+          <p>用你的账号登录模力方舟控制台。登录后即可在设置里管理访问令牌。</p>
+          <p style="margin-top:12px"><a class="button ghost sm" href="https://moark.com" target="_blank" rel="noreferrer">打开模力方舟 ↗</a></p>
+        </article>
+        <article class="step-card">
+          <b>2 — 生成令牌</b>
+          <h3>工作台 → 设置 → 访问令牌</h3>
+          <p>点击「新建令牌」，复制生成的字符串。<b>它只会完整显示一次</b>，请立刻粘贴到下一步的输入框里，或先存到本地备忘。</p>
+          <p style="margin-top:12px"><a class="button purple sm" href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">直达访问令牌页面 ↗</a></p>
+        </article>
+      </div>
+
+      <p class="hint" style="margin-top:16px">Token 形如一长串字母数字。<b>不要</b>把它贴进任何聊天窗口、公开仓库或论坛——它等同于你的钱包密码。</p>
+    </section>
+
+    <!-- STEP 2 : CLI -->
+    <span class="sec-anchor" id="install-cli"></span>
+    <section class="wrap section">
+      <div class="section-head">
+        <div><div class="section-kicker">STEP 02 / INSTALL CLI</div><h2>装一个编码 Agent 命令行</h2></div>
+        <p class="section-note">三种任选其一即可，<b>不确定选哪个就选 Codex</b>。已按你的系统高亮对应命令，点一下命令即可复制。</p>
+      </div>
+
+      <div class="callout warn">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2 1.5 17h17z" fill="#b4530a"/><rect x="9.2" y="7.4" width="1.6" height="4.6" fill="#fff"/><rect x="9.2" y="13.2" width="1.6" height="1.6" fill="#fff"/></svg>
+        <div><b>npm 方式需要先装 Node.js 18+</b>。完全没用过命令行的话，去 <a href="https://nodejs.org/zh-cn/download" target="_blank" rel="noreferrer" style="color:#b4530a;font-weight:800">nodejs.org</a> 下载 LTS 安装包，一路「下一步」装完，重启终端再执行下面的命令。原生脚本方式则不需要 Node。</div>
+      </div>
+
+      <div class="cli-grid">
+        <article class="cli-card">
+          <div class="cli-head"><span class="tool-icon">◎</span><span class="ver">npm · Node 18+</span></div>
+          <h3>Codex CLI</h3>
+          <p>OpenAI 官方命令行编码助手，支持自定义模型提供商。<b>本页默认推荐。</b></p>
+          <div class="cli-cmd" data-os="any"><span class="os">Windows · macOS · Linux</span><code data-copy>npm install -g @openai/codex</code><span class="copyic">复制</span></div>
+          <div class="cli-cmd" data-os="any"><span class="os">验证安装</span><code data-copy>codex --version</code><span class="copyic">复制</span></div>
+          <p class="cli-tip">macOS 也可用 <b>brew install --cask codex</b>。装完若提示 <b>command not found</b>，请关掉终端重新开一个。</p>
+        </article>
+
+        <article class="cli-card">
+          <div class="cli-head"><span class="tool-icon">✦</span><span class="ver">原生 / npm</span></div>
+          <h3>Claude Code</h3>
+          <p>Anthropic 官方终端编码 Agent，原生安装或 npm 均可。</p>
+          <div class="cli-cmd" data-os="any"><span class="os">npm（需 Node 18+）</span><code data-copy>npm install -g @anthropic-ai/claude-code</code><span class="copyic">复制</span></div>
+          <div class="cli-cmd" data-os="maclinux"><span class="os">macOS · Linux · WSL 原生</span><code data-copy>curl -fsSL https://claude.ai/install.sh | bash</code><span class="copyic">复制</span></div>
+          <div class="cli-cmd" data-os="win"><span class="os">Windows PowerShell 原生</span><code data-copy>irm https://claude.ai/install.ps1 | iex</code><span class="copyic">复制</span></div>
+          <div class="cli-cmd" data-os="any"><span class="os">验证安装</span><code data-copy>claude --version</code><span class="copyic">复制</span></div>
+          <p class="cli-tip">Windows CMD 可用 <b>curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</b>。</p>
+        </article>
+
+        <article class="cli-card">
+          <div class="cli-head"><span class="tool-icon">⌘</span><span class="ver">开源 · 跨平台</span></div>
+          <h3>OpenCode</h3>
+          <p>开源终端编码 Agent，通过配置文件接入任意 OpenAI 兼容接口。</p>
+          <div class="cli-cmd" data-os="maclinux"><span class="os">macOS · Linux</span><code data-copy>curl -fsSL https://opencode.ai/install | bash</code><span class="copyic">复制</span></div>
+          <div class="cli-cmd" data-os="any"><span class="os">Windows · 任意平台</span><code data-copy>npm install -g opencode-ai</code><span class="copyic">复制</span></div>
+          <div class="cli-cmd" data-os="any"><span class="os">验证安装</span><code data-copy>opencode --version</code><span class="copyic">复制</span></div>
+          <p class="cli-tip">装完在终端输入 <b>opencode</b> 即可启动。首次启动会生成配置目录，之后再写入配置。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- STEP 3 : CC SWITCH -->
+    <section class="downloads section" id="downloads">
+      <div class="wrap">
+        <div class="section-head">
+          <div><div class="section-kicker">STEP 03 / DESKTOP BRIDGE</div><h2>装 CC Switch（关键一步）</h2></div>
+          <p class="section-note">CC Switch 是本地桌面配置桥。<b>必须先装它，第 4 步的「一键导入」才有接收方。</b>没装就点导入，浏览器会没有反应。</p>
+        </div>
+
+        <div class="callout warn">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2 1.5 17h17z" fill="#b4530a"/><rect x="9.2" y="7.4" width="1.6" height="4.6" fill="#fff"/><rect x="9.2" y="13.2" width="1.6" height="1.6" fill="#fff"/></svg>
+          <div><b>顺序别搞反。</b>很多人卡住都是因为先点了「生成并导入配置」，但电脑上还没有 CC Switch。正确顺序：装 CLI → 装 CC Switch → 生成配置 → 导入。</div>
+        </div>
+
+        <div class="download-grid">
+          <article class="download-card">
+            <div class="platform"><span class="platform-icon">⊞</span><span class="version">v4.0.9 · x64</span></div>
+            <h3>Windows</h3>
+            <p>下载安装包，双击一路「下一步」。支持 Windows 10 / 11。</p>
+            <a href="https://github.com/farion1231/cc-switch/releases/download/v4.0.9/CC-Switch-v4.0.9-Windows.msi" target="_blank" rel="noreferrer">下载 Windows .msi ↗</a>
+            <a class="alt" href="https://github.com/farion1231/cc-switch/releases/download/v4.0.9/CC-Switch-v4.0.9-Windows-Portable.zip" target="_blank" rel="noreferrer">免安装版 .zip ↗</a>
+          </article>
+          <article class="download-card">
+            <div class="platform"><span class="platform-icon">⌘</span><span class="version">v4.0.9 · universal</span></div>
+            <h3>macOS</h3>
+            <p>已签名与公证，Apple Silicon / Intel 均可使用。也可 <b>brew install --cask cc-switch</b>。</p>
+            <a href="https://github.com/farion1231/cc-switch/releases/download/v4.0.9/CC-Switch-v4.0.9-macOS.dmg" target="_blank" rel="noreferrer">下载 macOS .dmg ↗</a>
+            <a class="alt" href="https://github.com/farion1231/cc-switch/releases/latest" target="_blank" rel="noreferrer">查看最新版本 ↗</a>
+          </article>
+          <article class="download-card">
+            <div class="platform"><span class="platform-icon">◈</span><span class="version">v4.0.9 · x86_64 / arm64</span></div>
+            <h3>Linux</h3>
+            <p>按发行版选择 .deb / .rpm，也可用 AppImage 免安装运行。</p>
+            <a href="https://github.com/farion1231/cc-switch/releases/expanded_assets/v4.0.9" target="_blank" rel="noreferrer">选择 Linux 安装包 ↗</a>
+            <a class="alt" href="https://github.com/farion1231/cc-switch/releases/latest" target="_blank" rel="noreferrer">查看最新版本 ↗</a>
+          </article>
+        </div>
+
+        <div class="callout" style="margin:22px 0 0">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="8.4" stroke="#159b73" stroke-width="1.6"/><path d="M10 5.6v5.2M10 13.6v.8" stroke="#159b73" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div>装好后请<b>启动一次</b> CC Switch，它会在系统里注册 <code>ccswitch://</code> 协议。首次使用时会自动识别你已装好的 CLI；如果没识别到，确认 CLI 已经装好并且至少启动过一次。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4 : BUILDER -->
+    <span class="sec-anchor" id="builder"></span>
+    <section class="wrap section">
+      <div class="section-head">
+        <div><div class="section-kicker">STEP 04 / CONFIG BUILDER</div><h2>生成配置并一键导入</h2></div>
+        <p class="section-note">密钥只在本地浏览器参与生成，不会上传。左侧填完，右侧实时预览，点「生成并导入配置」唤起 CC Switch 确认。</p>
+      </div>
+
+      <div class="builder">
+        <!-- LEFT -->
+        <div class="panel">
+          <div class="panel-head"><h3>连接模力方舟</h3><span class="step">STEP 04</span></div>
+          <div class="panel-body">
+            <div id="needSwitch" class="callout warn" style="margin-bottom:20px; align-items:flex-start">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2 1.5 17h17z" fill="#b4530a"/><rect x="9.2" y="7.4" width="1.6" height="4.6" fill="#fff"/><rect x="9.2" y="13.2" width="1.6" height="1.6" fill="#fff"/></svg>
+              <div>还没装 CC Switch？先去 <a href="#downloads" style="color:#b4530a;font-weight:800">第 3 步</a> 装好并启动一次，否则点「导入」不会有反应。<br><label style="display:inline-flex;align-items:center;gap:6px;margin:9px 0 0;font-size:12px;font-weight:700;cursor:pointer"><input type="checkbox" id="switchDone" style="width:auto;height:auto;margin:0" /> 我已装好 CC Switch，不再提示</label></div>
+            </div>
+
+            <div class="field">
+              <label for="token">模力方舟访问令牌</label>
+              <div class="secret-wrap">
+                <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="粘贴你的 API Token" />
+                <button class="toggle-secret" type="button" id="toggleSecret">显示</button>
+              </div>
+              <p class="hint">从 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">模力方舟 → 工作台 → 设置 → 访问令牌</a> 获取。粘贴后可用下方「测试令牌」先验一下真伪。</p>
+            </div>
+
+            <div class="keysafe">
+              <b>这枚令牌在本页怎么处理</b>
+              <ol>
+                <li><b>页面上不会出现完整令牌。</b>输入框是密码态，右侧预览里的形状是 <code>sk-••••••••3XYZ</code>，后四位只用来核对是哪一枚。截图到这里是安全的。</li>
+                <li><b>点「复制」才把完整值写进剪贴板</b>，页面上不渲染。复制后直接粘进配置文件，<b>粘完再截终端图</b>。</li>
+                <li><b>已经泄出去了：</b>去 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">访问令牌页</a> 删掉那一枚、重新生成一枚，旧令牌当场失效。作业进度不受影响。</li>
+              </ol>
+            </div>
+
+            <div class="field">
+              <label for="model">选择模型</label>
+              <select id="model">
+                <option value="Qwen3-Coder-30B-A3B-Instruct">Qwen3-Coder-30B-A3B-Instruct · 编程（实测最快，推荐）</option>
+                <option value="GLM-5.3">GLM-5.3 · 长文本强，但单次响应实测 500 秒以上</option>
+                <option value="Qwen3.6-35B-A3B">Qwen3.6-35B-A3B · Function Calling</option>
+                <option value="Qwen3.6-27B">Qwen3.6-27B · Function Calling</option>
+                <option value="Qwen3-VL-30B-A3B-Instruct">Qwen3-VL-30B-A3B-Instruct · 视觉多模态</option>
+                <option value="InternVL3-78B">InternVL3-78B · 视觉多模态</option>
+                <option value="InternVL3-38B">InternVL3-38B · 视觉多模态</option>
+                <option value="internlm3-8b-instruct">InternLM3-8B-Instruct · 轻量免费</option>
+                <option value="Atria-Dawn">Atria-Dawn · 长文本</option>
+                <option value="Intern-S2">Intern-S2 · 256K 长文本</option>
+                <option value="__custom__">其他 —— 手动输入模型 ID…</option>
+              </select>
+              <input id="modelCustom" type="text" spellcheck="false" placeholder="粘贴模力方舟控制台里的准确模型 ID" style="display:none;margin-top:8px" />
+              <div class="model-card"><div><b id="modelName">Qwen3-Coder-30B-A3B-Instruct</b><span id="modelMeta">32K 上下文 · Function Calling · 实测 0.9 秒返回工具调用，第一课推荐</span></div></div>
+              <p class="hint">模型名必须与控制台里<b>完全一致</b>（含大小写与后缀）。若启动后报 <code>model not found</code>，回到 <a href="https://moark.com/dashboard" target="_blank" rel="noreferrer">控制台</a> 复制准确 ID，选「其他」重新填写即可。</p>
+            </div>
+
+            <div class="field">
+              <label>选择要接入的 Agent</label>
+              <div class="tool-grid">
+                <div class="tool-option"><input type="radio" name="tool" id="codex" value="codex" checked /><label for="codex">◎ Codex</label></div>
+                <div class="tool-option"><input type="radio" name="tool" id="claude" value="claude" /><label for="claude">✦ Claude Code</label></div>
+                <div class="tool-option"><input type="radio" name="tool" id="opencode" value="opencode" /><label for="opencode">⌘ OpenCode</label></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px">
+              <button class="button ghost sm" id="testBtn" type="button" style="flex:1;min-width:130px">🔍 测试令牌是否有效</button>
+              <button class="button ghost sm" id="copyCmdBtn" type="button" style="flex:1;min-width:130px">⌨ 复制终端自检命令</button>
+            </div>
+            <div id="testResult" style="display:none;margin-bottom:16px"></div>
+
+            <button class="button primary" id="importBtn" type="button" style="width:100%">生成并导入配置 <span>↗</span></button>
+            <p class="hint" style="margin-top:10px">没有装 CC Switch、或弹窗被拦截时，可点击右侧「复制配置」手动写入文件，文件路径见右侧说明。</p>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="preview panel">
+          <div class="panel-head"><h3 id="previewTitle">Codex 配置预览</h3><span class="step">LIVE PREVIEW</span></div>
+          <div class="preview-window">
+            <div class="window-bar"><i class="window-dot"></i><i class="window-dot"></i><i class="window-dot"></i><span class="window-title">config.toml</span></div>
+            <pre id="previewCode"></pre>
+          </div>
+          <div class="preview-footer">
+            <span class="status shield" title="预览区里的令牌永远显示为遮蔽形，完整值不进页面"><i></i> 安全预览 · 令牌已遮蔽</span>
+            <div style="display:flex;gap:8px">
+              <button class="button ghost" id="copyBtn" type="button">复制配置</button>
+              <button class="button purple" id="importBtn2" type="button">直接导入</button>
+            </div>
+          </div>
+
+          <div class="filebox">
+            <div class="filebox-head"><span id="fileTitle">这个配置要放到哪里？</span><span class="step" id="fileBadge">CODEX</span></div>
+            <div id="fileList"></div>
+          </div>
+
+          <div id="manualNote" class="callout" style="margin:0;border-left-color:var(--purple);background:var(--lavender);color:#453a68"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5 : VERIFY + FAQ -->
+    <span class="sec-anchor" id="verify"></span>
+    <section class="wrap section">
+      <div class="section-head">
+        <div><div class="section-kicker">STEP 05 / VERIFY</div><h2>验证它真的能用了</h2></div>
+        <p class="section-note">配置导入后必须<b>完全退出终端再重开</b>，然后跑一句最简单的提问。能看到回答，才算真的成功。</p>
+      </div>
+
+      <div class="steps">
+        <article class="step-card"><b>01 — 重开终端</b><h3>关闭并重新打开终端</h3><p>新开的窗口才会加载最新的环境变量与配置。已开着的窗口改了配置也不会生效——这是最容易踩的坑。</p></article>
+        <article class="step-card"><b>02 — 启动工具</b><h3>运行 <code style="font-size:12px">codex</code> / <code style="font-size:12px">claude</code> / <code style="font-size:12px">opencode</code></h3><p>直接输入对应命令回车。如果是 Claude Code，可用 <code style="font-size:12px">/model</code> 确认模型映射是否指向了沐曦的模型。</p></article>
+        <article class="step-card"><b>03 — 发一句话</b><h3>输入「用 Python 写一个冒泡排序」</h3><p>能正常返回代码 = 配置成功。若报错，直接对照下方 FAQ 的报错信息排查。</p></article>
+      </div>
+
+      <!-- ====== 课程项目：把同一个 Key 交给两个网页 ====== -->
+      <span class="sec-anchor" id="course-projects"></span>
+      <h3 style="margin:52px 0 8px;font-size:22px;letter-spacing:-.03em">把同一个 Key 交给课程里的两个网页项目</h3>
+      <p style="margin:0 0 22px;color:#5e636b;font-size:14px;line-height:1.8;max-width:760px">
+        第二课《赤壁·风起》和第三课《歧路》是<b>本地运行的网页项目</b>，同样要用到这枚令牌。
+        它们不读环境变量，而是读项目目录里的 <code>config.json</code>。
+        选一个项目，下面的命令会<b>带着你的 Key 一起生成好</b>——点一下就复制，粘进终端回车即可。
+      </p>
+
+      <div class="tool-grid" style="margin-bottom:20px;max-width:520px">
+        <div class="tool-option"><input type="radio" name="proj" id="proj2" value="2" checked /><label for="proj2">⚔ 第二课 · 赤壁·风起</label></div>
+        <div class="tool-option"><input type="radio" name="proj" id="proj3" value="3" /><label for="proj3">🕰 第三课 · 歧路</label></div>
+      </div>
+
+      <div class="cli-cmd" data-os="any"><span class="os">① 下载项目</span><code data-copy id="cmdClone">git clone https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp.git</code><span class="copyic">复制</span></div>
+      <div class="cli-cmd" data-os="any"><span class="os">② 进目录并写入你的 Key</span><code data-copy id="cmdKey">cd MetaX-Coding-Agent-Bootcamp/lesson-02-chibi-game/lab ; python -c "import json,shutil;shutil.copy('config.example.json','config.json');d=json.load(open('config.json',encoding='utf-8'));d['api_key']='在这里粘贴你的令牌';open('config.json','w',encoding='utf-8').write(json.dumps(d,ensure_ascii=False,indent=2));print('已写入 config.json')"</code><span class="copyic">复制</span></div>
+      <div class="cli-cmd" data-os="any"><span class="os">③ 启动并打开</span><code data-copy id="cmdRun">python server.py</code><span class="copyic">复制</span></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 10px">
+        <button class="button primary sm" id="copyAllBtn" type="button">⧉ 一键复制这三行</button>
+        <a class="button ghost sm" href="https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp/archive/master.zip" target="_blank" rel="noreferrer">不想用 git？下载 ZIP ↗</a>
+      </div>
+
+      <p class="hint" id="projHint">
+        执行完第 ③ 行，浏览器打开 <b id="projUrl">http://127.0.0.1:8848</b> 就能看到项目跑起来了。
+        第 ② 行里的 Key 在页面上是 <code>sk-••••••••3XYZ</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
+        它只写进你本机的 <code>config.json</code>，该文件已被 <code>.gitignore</code> 排除，不会进仓库、也不会进浏览器。
+      </p>
+      <div id="keyWarn" class="callout warn" style="margin:14px 0 0;display:none">
+        <div>上面的命令里还是占位文字——请先把令牌粘贴到<b>第 4 步</b>的输入框里，命令会自动换成你自己的 Key。</div>
+      </div>
+
+      <span class="sec-anchor" id="faq"></span>
+      <h3 style="margin:44px 0 16px;font-size:20px;letter-spacing:-.03em">卡住了？对照报错找答案</h3>
+      <div class="faq">
+        <details class="qa"><summary>点了「生成并导入配置」，浏览器一点反应都没有</summary><div class="qa-body">
+          <ul>
+            <li><b>99% 是本机还没装 CC Switch</b>，或者装了但没启动过。去第 3 步装好并启动一次。</li>
+            <li>或者浏览器把协议跳转拦截了。看地址栏右侧是否有被拦截的图标，手动允许「打开 CC Switch」。</li>
+            <li>macOS 若提示无法打开，去「系统设置 → 隐私与安全性」放行一次。</li>
+            <li>协议没注册成功时：<b>Windows</b> 重装一次安装包，或检查注册表 <code>HKEY_CLASSES_ROOT\ccswitch</code>；<b>macOS</b> 执行 <code>open -a "CC Switch" --args --register-protocol</code>。</li>
+            <li>兜底方案：点「复制配置」，按右侧路径提示手动写入文件。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>报错 <code>401 Unauthorized</code> / <code>invalid api key</code></summary><div class="qa-body">
+          <ul>
+            <li>Token 复制时多带了空格或换行。删掉重新粘贴一次，注意别把「Bearer」前缀也复制进去。</li>
+            <li>Token 被删除或过期了，回 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">访问令牌页</a>重新生成一个。</li>
+            <li>用默认的免费体验令牌时可能有每日次数限制，次数用完也会报错。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>报错 <code>model not found</code> / <code>404</code> / <code>invalid model</code></summary><div class="qa-body">
+          <ul>
+            <li>模型名与平台不一致。到模力方舟控制台的模型列表里<b>原样复制</b>模型 ID。</li>
+            <li>带 <code>-Preview</code> 后缀的模型属于预览版，可能已下线或改名为正式版，建议换成不带 Preview 的型号。</li>
+            <li>选了资源包里<b>不包含</b>的模型。资源包只覆盖它列出的那些模型，换一个包内模型即可。</li>
+            <li>回到第 4 步，模型下拉选「其他 —— 手动输入模型 ID」，粘贴准确名称重新导入。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>改了配置，但终端里还是老样子 / 完全没变化</summary><div class="qa-body">
+          <ul>
+            <li><b>彻底关掉终端再重新打开</b>。仅切标签页不算，最好整个退出进程。</li>
+            <li>确认 CC Switch 里对应的供应商卡片是「当前启用」状态（通常有高亮边框）。</li>
+            <li>Claude Code 一般支持热加载；Codex / OpenCode 通常需要重启。</li>
+            <li>检查是否同时存在多个配置来源冲突（比如你既改了 shell 里的环境变量，又用 CC Switch 导入了一份）。</li>
+          </ul>
+        </details>
+
+        <details class="qa"><summary>提示 <code>command not found</code> / <code>不是内部或外部命令</code></summary><div class="qa-body">
+          <ul>
+            <li>大概率是装完后没有重开终端。关掉终端重新开一个再试。</li>
+            <li>npm 全局目录没进 PATH。执行 <code>npm config get prefix</code> 看路径，把它加进系统环境变量 PATH。</li>
+            <li>Windows 上如果是用 nvm 装的 Node，重启一次电脑通常就能解决。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>连接超时 / <code>ETIMEDOUT</code> / 一直卡住不动</summary><div class="qa-body">
+          <ul>
+            <li>检查本机网络能否访问 <code>moark.com</code>（浏览器打开试试）。</li>
+            <li>公司网络 / 代理可能拦截了 API 域名，换一个网络环境试试。</li>
+            <li>确认请求地址填对了：Codex 用 <code>https://moark.com/v1</code>，Claude Code 用 <code>https://moark.com/anthropic</code>，OpenCode 用 <code>https://ai.gitee.com/v1</code>，三者不通用。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>把 Token 填进这个网页，安全吗？</summary><div class="qa-body">
+          <ul>
+            <li>页面本身不联网上传任何东西，所有拼接都在你浏览器本地完成，可以断网使用（会少了图标等资源）。</li>
+            <li><b>但要注意：</b>「一键导入」生成的 <code>ccswitch://</code> 链接里<b>明文包含你的 Token</b>，它会进入浏览器历史记录。请不要复制这个链接发给别人、也不要发到公开渠道。</li>
+            <li>如果是团队共享，推荐的做法是：链接里不放 Token，让每个人自己填；或者直接在 CC Switch 里手动「添加供应商」，完全不走链接。</li>
+          </ul>
+        </div></details>
+      </div>
+    </section>
+
+    <div class="wrap sources">
+      <strong>参考来源：</strong>
+      <a href="https://moark.com/docs/integrations/Development-Tools/ccswitch" target="_blank" rel="noreferrer">CC Switch 快速配置文档（模力方舟官方）</a> ·
+      <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">访问令牌管理</a> ·
+      <a href="https://github.com/farion1231/cc-switch/releases/latest" target="_blank" rel="noreferrer">CC Switch Releases</a> ·
+      <a href="https://ccswitch.io/en/docs?item=deeplink&section=faq" target="_blank" rel="noreferrer">CC Switch 深链接协议</a>
+      <div style="margin-top:10px">请求地址与认证字段来源于模力方舟官方文档；模型可用范围以模力方舟控制台实时列表为准。</div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>沐曦 × 模力方舟 · Coding Agent 配置中心</span>
+      <span>API Key 不上传 · 配置在本地生成 · 本页不收集任何数据</span>
+    </div>
+  </footer>
+
+  <button id="toTop" type="button" aria-label="回到顶部">↑</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ============ 基础 ============ */
+    var $ = function (s) { return document.querySelector(s); };
+    var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+    var endpoint = {
+      codex: 'https://moark.com/v1',
+      claude: 'https://moark.com/anthropic',
+      opencode: 'https://ai.gitee.com/v1'
+    };
+    var toolLabel = { codex: 'Codex', claude: 'Claude Code', opencode: 'OpenCode' };
+    var fileName = { codex: 'config.toml', claude: 'settings.json', opencode: 'opencode.json' };
+
+    var tokenEl = document.querySelector('input#token');
+    var modelEl = document.querySelector('select#model');
+    var modelCustomEl = $('#modelCustom');
+    var previewEl = $('#previewCode');
+    var titleEl = $('#previewTitle');
+    var toastEl = $('#toast');
+
+    if (!tokenEl || !modelEl) return;
+
+    /* ============ 工具函数 ============ */
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function copyText(text, okMsg) {
+      var done = function () { notify(okMsg || '已复制到剪贴板'); };
+      var fail = function () { notify('复制失败，请手动选中内容后按 Ctrl/Cmd + C', true); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fallback);
+      } else { fallback(); }
+      function fallback() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta); done();
+        } catch (e) { fail(); }
+      }
+    }
+    var toastTimer;
+    function notify(msg, isErr) {
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.toggle('err', !!isErr);
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 3600);
+    }
+
+    /* ============ 系统 / 环境检测 ============ */
+    var ua = navigator.userAgent || '';
+    var OS = 'other';
+    if (/Windows|Win32|Win64/i.test(ua)) OS = 'win';
+    else if (/Macintosh|Mac OS X/i.test(ua)) OS = 'mac';
+    else if (/Linux|X11|CrOS/i.test(ua) && !/Android/i.test(ua)) OS = 'linux';
+    var isMobile = /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
+
+    document.body.dataset.os = OS;
+    if (isMobile) document.body.classList.add('is-mobile');
+
+    var osName = { win: 'Windows', mac: 'macOS', linux: 'Linux / WSL', other: '未知系统' }[OS];
+    var envOs = $('#envOs'), envHintTag = $('#envHintTag');
+    if (envOs) envOs.textContent = osName + (isMobile ? '（移动端）' : '');
+    if (envHintTag) {
+      if (isMobile) { envHintTag.textContent = '⚠️ 移动端无法完成配置，请换电脑'; envHintTag.className = 'tag warn'; }
+      else if (OS === 'other') { envHintTag.textContent = '未识别的系统，命令请自行对照'; envHintTag.className = 'tag gray'; }
+      else { envHintTag.textContent = '已自动高亮适用于你的命令'; envHintTag.className = 'tag'; }
+    }
+
+    // 高亮当前系统的命令块
+    $$('.cli-cmd').forEach(function (el) {
+      var scope = el.getAttribute('data-os');
+      var hot = scope === 'any' ||
+                (scope === 'win' && OS === 'win') ||
+                (scope === 'maclinux' && (OS === 'mac' || OS === 'linux'));
+      el.classList.add(hot ? 'hot' : 'dim');
+    });
+
+    // 路径分隔符按系统渲染
+    function homePath(p) {
+      if (OS === 'win') {
+        return p.replace(/^~/, '%USERPROFILE%').replace(/\//g, '\\');
+      }
+      return p.replace(/^~/, '~');
+    }
+
+    /* ============ 路线图本地进度 ============ */
+    var LS_KEY = 'metax-config-progress-v1';
+    var progress = {};
+    try { progress = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; } catch (e) { progress = {}; }
+    function paintRoadmap() {
+      $$('.rstep').forEach(function (el) {
+        el.classList.toggle('done', !!progress[el.getAttribute('data-key')]);
+      });
+    }
+    $$('.rstep').forEach(function (el) {
+      el.addEventListener('click', function () {
+        progress[el.getAttribute('data-key')] = true;
+        try { localStorage.setItem(LS_KEY, JSON.stringify(progress)); } catch (e) {}
+        paintRoadmap();
+      });
+    });
+    paintRoadmap();
+
+    /* ============ CC Switch 提示 ============ */
+    var SW_KEY = 'metax-switch-done-v1';
+    var needSwitch = $('#needSwitch'), switchDone = $('#switchDone');
+    if (switchDone) {
+      if (localStorage.getItem(SW_KEY) === '1' && needSwitch) needSwitch.style.display = 'none';
+      switchDone.addEventListener('change', function () {
+        try { localStorage.setItem(SW_KEY, switchDone.checked ? '1' : '0'); } catch (e) {}
+        if (needSwitch) needSwitch.style.display = switchDone.checked ? 'none' : '';
+      });
+    }
+
+    /* ============ 模型 ============ */
+    var modelMetaMap = {
+      'GLM-5.3': '128K 上下文 · 1M 缓存 · ⚠ 单次响应实测 500 秒以上，容易超时',
+      'Qwen3-Coder-30B-A3B-Instruct': '32K 上下文 · Function Calling · 实测 0.9 秒返回工具调用，第一课推荐',
+      'Qwen3.6-35B-A3B': '64K 上下文 · Function Calling · 视觉理解',
+      'Qwen3.6-27B': '64K 上下文 · Function Calling · 视觉理解',
+      'Qwen3-VL-30B-A3B-Instruct': '32K 上下文 · Function Calling · 视觉多模态',
+      'InternVL3-78B': '32K 上下文 · 视觉多模态',
+      'InternVL3-38B': '32K 上下文 · 视觉多模态',
+      'internlm3-8b-instruct': '32K 上下文 · 轻量免费 · 通用对话',
+      'Atria-Dawn': '256K 上下文 · 长文本 · 思维链较长，适合长文档理解',
+      'Intern-S2': '256K 上下文 · 长文本 · 科研预览'
+    };
+    function currentModel() {
+      if (modelEl.value === '__custom__') {
+        var cv = modelCustomEl && modelCustomEl.value ? modelCustomEl.value.trim() : '';
+        return cv || '你的模型ID';
+      }
+      return modelEl.value || '你的模型ID';
+    }
+    function syncModelUI() {
+      var custom = modelEl.value === '__custom__';
+      if (modelCustomEl) modelCustomEl.style.display = custom ? '' : 'none';
+      var m = currentModel();
+      var nameEl = $('#modelName'), metaEl = $('#modelMeta');
+      if (nameEl) nameEl.textContent = m;
+      if (metaEl) {
+        metaEl.textContent = custom
+          ? '手动填写的自定义模型 ID'
+          : (modelMetaMap[m] || '曦云 C 系列 · 对话模型');
+      }
+    }
+
+    /* ============ 配置生成 ============ */
+    function selectedTool() {
+      var el = document.querySelector('input[name="tool"]:checked');
+      return el ? el.value : 'codex';
+    }
+    // real=true 才产出含真实令牌的文本（仅供剪贴板），页面渲染一律用 false。
+    function configText(real) {
+      var m = currentModel();
+      var t = selectedTool();
+      var raw = ((tokenEl && tokenEl.value) || '').trim();
+      var k = real ? (raw || '在这里粘贴你的令牌') : maskKey(raw);
+
+      if (t === 'codex') {
+        return [
+          'model_provider = "moark"',
+          'model = "' + m + '"',
+          'model_reasoning_effort = "high"',
+          'disable_response_storage = true',
+          'preferred_auth_method = "apikey"',
+          '',
+          '[model_providers.moark]',
+          'name = "沐曦 / 模力方舟"',
+          'base_url = "' + endpoint.codex + '"',
+          'wire_api = "responses"',
+          'requires_openai_auth = true',
+          'env_key = "MOARK_API_KEY"'
+        ].join('\n');
+      }
+      if (t === 'claude') {
+        return JSON.stringify({
+          env: {
+            ANTHROPIC_AUTH_TOKEN: k,
+            ANTHROPIC_BASE_URL: endpoint.claude,
+            ANTHROPIC_MODEL: m,
+            ANTHROPIC_DEFAULT_SONNET_MODEL: m,
+            ANTHROPIC_DEFAULT_OPUS_MODEL: m,
+            ANTHROPIC_DEFAULT_HAIKU_MODEL: m,
+            // 四项超时必须一次设全：只加 API_TIMEOUT_MS 不够。
+            // 真正的杀手是首字节超时，Claude Code 默认只有 180 秒，
+            // 而慢模型单次响应实测要 350–580 秒 —— 不设就是必挂。
+            API_TIMEOUT_MS: '1800000',
+            CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS: '900000',
+            // 下面两项的实现是 Math.max(设定值, 300000)，设得比 300 秒小不会生效
+            CLAUDE_STREAM_IDLE_TIMEOUT_MS: '900000',
+            CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS: '900000'
+          }
+        }, null, 2);
+      }
+      var o = { $schema: 'https://opencode.ai/config.json', provider: {}, model: 'moark/' + m };
+      o.provider.moark = {
+        npm: '@ai-sdk/openai-compatible',
+        name: '沐曦 / 模力方舟',
+        options: { baseURL: endpoint.opencode, apiKey: k },
+        models: {}
+      };
+      o.provider.moark.models[m] = { name: m };
+      return JSON.stringify(o, null, 2);
+    }
+
+    /* ============ 语法高亮 ============ */
+    function highlight(raw, fmt) {
+      var e = esc(raw);
+      if (fmt === 'toml') {
+        return e
+          .replace(/^(\s*\[[^\]]+\])/gm, '<span class="t-section">$1</span>')
+          .replace(/^(\s*[A-Za-z_][\w.]*)(\s*=)/gm, '<span class="t-key">$1</span>$2')
+          .replace(/(&quot;[^&]*?&quot;)/g, '<span class="t-str">$1</span>')
+          .replace(/\b(true|false)\b/g, '<span class="t-bool">$1</span>');
+      }
+      return e
+        .replace(/(&quot;[^&]*?&quot;)(\s*:)/g, '<span class="json-key">$1</span>$2')
+        .replace(/(&quot;[^&]*?&quot;)/g, '<span class="json-string">$1</span>')
+        .replace(/\b(true|false)\b/g, '<span class="json-bool">$1</span>');
+    }
+
+    /* ============ 文件路径说明 ============ */
+    function fileInfo(t) {
+      if (t === 'codex') {
+        return {
+          badge: 'CODEX',
+          title: '手动配置：需要 2 个文件',
+          rows: [
+            { role: '主配置', path: homePath('~/.codex/config.toml') },
+            { role: '密钥文件', path: homePath('~/.codex/auth.json') }
+          ],
+          note: '<b>手动配置补充（不用 CC Switch 时）：</b>Codex 的密钥不写在 config.toml 里。请把 <code>auth.json</code> 内容设为 <code>{"OPENAI_API_KEY": null}</code>，然后把环境变量 <code>MOARK_API_KEY</code> 设成你的令牌：Windows 用 <code>setx MOARK_API_KEY "你的令牌"</code>（设置后需重开终端），macOS / Linux 用 <code>export MOARK_API_KEY=你的令牌</code>（建议写进 ~/.zshrc 或 ~/.bashrc 永久生效）。'
+        };
+      }
+      if (t === 'claude') {
+        return {
+          badge: 'CLAUDE',
+          title: '手动配置：只需 1 个文件',
+          rows: [{ role: '配置文件', path: homePath('~/.claude/settings.json') }],
+          note: '<b>手动配置说明：</b>把右侧 JSON 整体写入 <code>settings.json</code>（若文件已存在，请把 <code>env</code> 里的字段合并进去，不要整体覆盖）。保存后重开终端即可。'
+        };
+      }
+      return {
+        badge: 'OPENCODE',
+        title: '手动配置：二选一',
+        rows: [
+          { role: '全局配置', path: homePath('~/.config/opencode/opencode.json') },
+          { role: '项目配置', path: homePath('./opencode.json') }
+        ],
+        note: '<b>手动配置说明：</b>把右侧 JSON 写入全局配置路径，或在某个项目根目录建 <code>opencode.json</code> 只对该项目生效。注意 OpenCode 这条链路的请求地址是 <code>https://ai.gitee.com/v1</code>，与其他两个工具不同。'
+      };
+    }
+    function renderFiles(t) {
+      var info = fileInfo(t);
+      var badge = $('#fileBadge'), title = $('#fileTitle'), list = $('#fileList'), note = $('#manualNote');
+      if (badge) badge.textContent = info.badge;
+      if (title) title.textContent = info.title;
+      if (list) {
+        list.innerHTML = info.rows.map(function (r) {
+          return '<div class="pathrow"><span class="role">' + esc(r.role) + '</span>' +
+                 '<code data-path="' + esc(r.path) + '" title="点击复制">' + esc(r.path) + '</code>' +
+                 '<button class="minibtn" data-copy-path="' + esc(r.path) + '">复制</button></div>';
+        }).join('');
+        list.querySelectorAll('[data-path]').forEach(function (c) {
+          c.addEventListener('click', function () { copyText(c.getAttribute('data-path'), '路径已复制'); });
+        });
+        list.querySelectorAll('[data-copy-path]').forEach(function (b) {
+          b.addEventListener('click', function () { copyText(b.getAttribute('data-copy-path'), '路径已复制'); });
+        });
+      }
+      if (note) note.innerHTML = info.note;
+    }
+
+    /* ============ 渲染 ============ */
+    function render() {
+      var t = selectedTool();
+      syncModelUI();
+      if (titleEl) titleEl.textContent = toolLabel[t] + ' 配置预览';
+      var wt = document.querySelector('.window-title');
+      if (wt) wt.textContent = fileName[t];
+      if (previewEl) previewEl.innerHTML = highlight(configText(false), t === 'codex' ? 'toml' : 'json');
+      renderFiles(t);
+    }
+
+    /* ============ 事件绑定 ============ */
+    $$('input[name="tool"], #model').forEach(function (el) { el.addEventListener('change', render); });
+    if (modelCustomEl) modelCustomEl.addEventListener('input', render);
+    tokenEl.addEventListener('input', render);
+    $('.window-title').textContent = fileName[selectedTool()];
+
+    var toggleBtn = $('#toggleSecret');
+    var secretTimer = null;
+    if (toggleBtn) toggleBtn.addEventListener('click', function () {
+      var show = tokenEl.type === 'password';
+      tokenEl.type = show ? 'text' : 'password';
+      toggleBtn.textContent = show ? '隐藏' : '显示';
+      if (secretTimer) { clearTimeout(secretTimer); secretTimer = null; }
+      // 明文是「借来看一眼」，8 秒自动收回：避免它一直挂在屏幕上被截进图里
+      if (show) {
+        notify('明文显示 8 秒后自动隐藏');
+        secretTimer = setTimeout(function () {
+          tokenEl.type = 'password';
+          toggleBtn.textContent = '显示';
+          secretTimer = null;
+        }, 8000);
+      }
+    });
+
+    var copyBtn = $('#copyBtn');
+    if (copyBtn) copyBtn.addEventListener('click', function () {
+      copyText(configText(true), '配置已复制 · 含真实令牌，粘进文件后请勿截屏');
+    });
+
+    /* ---- 导入 ---- */
+    function buildImportLink() {
+      var t = selectedTool();
+      var m = currentModel();
+      var params = new URLSearchParams({
+        resource: 'provider',
+        app: t,
+        name: '沐曦 / 模力方舟',
+        enabled: 'true',
+        homepage: 'https://moark.com',
+        endpoint: endpoint[t],
+        apiKey: tokenEl.value.trim(),
+        model: m
+      });
+      if (t === 'claude') {
+        params.set('haikuModel', m);
+        params.set('sonnetModel', m);
+        params.set('opusModel', m);
+      }
+      return 'ccswitch://v1/import?' + params.toString();
+    }
+    function doImport() {
+      if (!tokenEl.value.trim()) {
+        tokenEl.focus();
+        notify('请先在第 4 步输入你的模力方舟访问令牌', true);
+        return;
+      }
+      var link = buildImportLink();
+      var hidden = false;
+      function onVis() { if (document.hidden) hidden = true; }
+      document.addEventListener('visibilitychange', onVis);
+      notify('正在唤起 CC Switch…如果没弹出任何窗口，说明本机还没安装');
+      window.location.href = link;
+      setTimeout(function () {
+        document.removeEventListener('visibilitychange', onVis);
+        if (!hidden && !document.hidden && OS !== 'other') {
+          notify('CC Switch 似乎没有启动。请确认已安装并启动过一次，或改用「复制配置」手动写入。', true);
+          var nav = $('#needSwitch');
+          if (nav) { nav.style.display = ''; }
+        }
+      }, 2200);
+    }
+    var importBtn = $('#importBtn'); if (importBtn) importBtn.addEventListener('click', doImport);
+    var importBtn2 = $('#importBtn2'); if (importBtn2) importBtn2.addEventListener('click', doImport);
+
+    /* ---- 命令复制 ---- */
+    $$('.cli-cmd code[data-copy]').forEach(function (c) {
+      c.addEventListener('click', function () {
+        // 有 data-real 就复制真实值（页面上一定是遮蔽形）
+        var t = c.getAttribute('data-real') || c.textContent.trim();
+        // 提示里不回显命令内容——含令牌的命令一旦进了 toast，截屏就一起带走了
+        copyText(t, c.id === 'cmdKey'
+          ? '命令已复制 · 含真实令牌，粘进终端后请勿截屏'
+          : '命令已复制，粘进终端回车即可');
+      });
+    });
+
+    /* ---- 课程项目命令（第二 / 三课）：把 Key 一起生成进命令 ---- */
+    var PROJ = {
+      '2': { dir: 'lesson-02-chibi-game', port: '8848', name: '赤壁·风起' },
+      '3': { dir: 'lesson-03-timeline-lab', port: '8850', name: '歧路' }
+    };
+    var cmdKeyEl = $('#cmdKey'), cmdRunEl = $('#cmdRun'), projUrlEl = $('#projUrl'), keyWarnEl = $('#keyWarn');
+
+    function currentProj() {
+      var el = document.querySelector('input[name="proj"]:checked');
+      return PROJ[el ? el.value : '2'];
+    }
+    function tokenOrPlaceholder() {
+      return (tokenEl && tokenEl.value.trim()) ? tokenEl.value.trim() : null;
+    }
+    // 页面上只显示「遮蔽形」：尾四位用于自己核对是哪一枚令牌，其余一律圆点。
+    // 完整值从不写进 DOM 的文本节点，只在点「复制」时进剪贴板。
+    function maskKey(k) {
+      if (!k) return 'sk-' + '•'.repeat(12);
+      if (k.length <= 8) return '•'.repeat(k.length);
+      return 'sk-' + '•'.repeat(8) + k.slice(-4);
+    }
+    function buildPy(key) {
+      return 'python -c "import json,shutil;shutil.copy(\'config.example.json\',\'config.json\');' +
+             'd=json.load(open(\'config.json\',encoding=\'utf-8\'));d[\'api_key\']=\'' + key + '\';' +
+             'open(\'config.json\',\'w\',encoding=\'utf-8\').write(json.dumps(d,ensure_ascii=False,indent=2));' +
+             'print(\'已写入 config.json\')"';
+    }
+    function writeCmd() {
+      var p = currentProj(), k = tokenOrPlaceholder();
+      var shown = k ? maskKey(k) : '在这里粘贴你的令牌';
+      var cdLine = 'cd MetaX-Coding-Agent-Bootcamp/' + p.dir + '/lab; ';
+      if (cmdKeyEl) {
+        cmdKeyEl.textContent = cdLine + buildPy(shown);
+        // 真实命令放 data-real，点击复制时优先取它
+        cmdKeyEl.setAttribute('data-real', cdLine + buildPy(k || '在这里粘贴你的令牌'));
+      }
+      if (cmdRunEl) cmdRunEl.textContent = 'python server.py';
+      if (projUrlEl) projUrlEl.textContent = 'http://127.0.0.1:' + p.port;
+      if (keyWarnEl) keyWarnEl.style.display = k ? 'none' : '';
+    }
+    $$('input[name="proj"]').forEach(function (r) { r.addEventListener('change', writeCmd); });
+    if (tokenEl) tokenEl.addEventListener('input', writeCmd);
+    writeCmd();
+
+    var copyAllBtn = $('#copyAllBtn');
+    if (copyAllBtn) {
+      copyAllBtn.addEventListener('click', function () {
+        var p = currentProj();
+        var txt = [
+          '# ① 下载课程仓库（已经下载过就跳过这行）',
+          'git clone https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp.git',
+          '',
+          '# ② 进入「' + p.name + '」目录，生成 config.json 并写进你的 Key',
+          (cmdKeyEl ? (cmdKeyEl.getAttribute('data-real') || cmdKeyEl.textContent.trim()) : ''),
+          '',
+          '# ③ 启动，然后浏览器打开 http://127.0.0.1:' + p.port,
+          'python server.py'
+        ].join('\n');
+        copyText(txt, '三条命令已复制，粘进终端即可（' + p.name + '）');
+      });
+    }
+
+    /* ---- 测试令牌 ---- */
+    var testBtn = $('#testBtn'), testResult = $('#testResult');
+    function showResult(html, kind) {
+      if (!testResult) return;
+      var bg = kind === 'ok' ? '#e8f6f0' : kind === 'bad' ? '#fef3f2' : '#fff7ed';
+      var bar = kind === 'ok' ? '#159b73' : kind === 'bad' ? '#c0392b' : '#b4530a';
+      testResult.innerHTML = '<div style="border-left:3px solid ' + bar + ';background:' + bg +
+        ';padding:13px 15px;font-size:12.5px;line-height:1.7;border-radius:2px">' + html + '</div>';
+      testResult.style.display = '';
+    }
+    // real=false 时输出遮蔽形：这段命令会直接印在「踩坑现场」的截图里
+    function curlCmd(real) {
+      var raw = tokenEl.value.trim();
+      var k = real ? (raw || 'YOUR_TOKEN') : maskKey(raw);
+      var m = currentModel();
+      return 'curl -s ' + endpoint.codex + '/chat/completions \\\n' +
+             '  -H "Authorization: Bearer ' + k + '" \\\n' +
+             '  -H "Content-Type: application/json" \\\n' +
+             '  -d \'{"model":"' + m + '","messages":[{"role":"user","content":"ping"}],"max_tokens":8}\'';
+    }
+    if (testBtn) testBtn.addEventListener('click', function () {
+      var k = tokenEl.value.trim();
+      if (!k) { tokenEl.focus(); notify('请先粘贴访问令牌', true); return; }
+      var old = testBtn.textContent;
+      testBtn.disabled = true; testBtn.textContent = '⏳ 测试中…';
+      var ctrl = new AbortController();
+      var timer = setTimeout(function () { ctrl.abort(); }, 9000);
+      fetch(endpoint.codex + '/models', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + k },
+        signal: ctrl.signal
+      }).then(function (r) {
+        clearTimeout(timer);
+        if (r.ok) {
+          showResult('✅ <b>令牌有效</b>，接口返回 ' + r.status + '。可以继续第 5 步了。', 'ok');
+        } else if (r.status === 401 || r.status === 403) {
+          showResult('❌ <b>令牌无效或已被禁用</b>（HTTP ' + r.status + '）。请回到 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">访问令牌页</a> 重新生成，注意不要带空格或换行。', 'bad');
+        } else if (r.status === 404) {
+          showResult('⚠️ 接口返回 404。这一步只验证了网络可达，<b>不能确认令牌是否有效</b>。建议改用下方终端命令做真实对话测试。', 'warn');
+        } else {
+          showResult('⚠️ 接口返回 HTTP ' + r.status + '。可能是额度用尽或服务端限制，请用下方终端命令进一步确认。', 'warn');
+        }
+      }).catch(function () {
+        clearTimeout(timer);
+        showResult('⚠️ <b>浏览器无法直连该接口</b>（多半是跨域限制或网络代理拦截），这不代表你的令牌有问题。请复制下方命令，到终端里跑一次真实对话测试：' +
+          '<div style="margin-top:9px"><code style="display:block;background:#1e2229;color:#a9e8c9;padding:10px 12px;border-radius:2px;font-size:11.5px;white-space:pre-wrap;overflow-wrap:anywhere">' +
+          esc(curlCmd(false)) + '</code></div>' +
+          '<div style="margin-top:8px">命令里的令牌是<b>遮蔽形</b>，这一段可以放心截图。要用它请点左侧「复制终端自检命令」，完整值只进剪贴板。</div>' +
+          '<div style="margin-top:8px">返回 JSON 里带 <code>"choices"</code> 即表示令牌和模型都可用；返回 <code>401</code> 查令牌，返回 <code>model not found</code> 查模型名。</div>', 'warn');
+      }).then(function () {
+        testBtn.disabled = false; testBtn.textContent = old;
+      });
+    });
+    var copyCmdBtn = $('#copyCmdBtn');
+    if (copyCmdBtn) copyCmdBtn.addEventListener('click', function () { copyText(curlCmd(true), '终端自检命令已复制 · 含真实令牌，粘进终端后请勿截屏'); });
+
+    /* ---- 回到顶部 ---- */
+    var toTop = $('#toTop');
+    if (toTop) {
+      window.addEventListener('scroll', function () {
+        toTop.classList.toggle('show', window.scrollY > 600);
+      }, { passive: true });
+      toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    }
+
+    /* ---- 初始化 ---- */
+    render();
+  })();
+  </script>
+</body>
+</html>
