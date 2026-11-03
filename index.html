@@ -215,7 +215,9 @@
       .download-grid,.cli-grid,.steps { grid-template-columns:1fr; }
       .section { padding:56px 0; }
       .section-head { display:block; } .section-note { margin-top:15px; }
-      .roadmap-inner { overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px; }
+      /* 7 个步骤在窄屏排不进一行：让它换行，别做成需要横滑的横条（学生找不到第 7 步） */
+      .roadmap-inner { flex-wrap:wrap; gap:7px 8px; padding-bottom:4px; }
+      .rsep { display:none; }
       .roadmap-title { display:none; }
     }
     @media (max-width:520px) {
@@ -278,6 +280,8 @@
           <a class="rstep" data-key="t5" href="#verify"><i><span>5</span></i> 验证能对话</a>
           <span class="rsep"></span>
           <a class="rstep" data-key="t6" href="#course-projects"><i><span>6</span></i> 用课程项目</a>
+          <span class="rsep"></span>
+          <a class="rstep" data-key="t7" href="#workbuddy"><i><span>7</span></i> 接入 WorkBuddy</a>
         </div>
         <div class="env-bar" id="envBar">
           <span>当前环境：<b id="envOs">检测中…</b></span>
@@ -437,7 +441,7 @@
             <div class="keysafe">
               <b>这枚令牌在本页怎么处理</b>
               <ol>
-                <li><b>页面上不会出现完整令牌。</b>输入框是密码态，右侧预览里的形状是 <code>sk-••••••••3XYZ</code>，后四位只用来核对是哪一枚。截图到这里是安全的。</li>
+                <li><b>页面上不会出现完整令牌。</b>输入框是密码态，右侧预览里的形状是 <code>A1b2••••••••9Zk3</code>，前四位和后四位只用来核对是哪一枚。截图到这里是安全的。</li>
                 <li><b>点「复制」才把完整值写进剪贴板</b>，页面上不渲染。复制后直接粘进配置文件，<b>粘完再截终端图</b>。</li>
                 <li><b>已经泄出去了：</b>去 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">访问令牌页</a> 删掉那一枚、重新生成一枚，旧令牌当场失效。作业进度不受影响。</li>
               </ol>
@@ -554,11 +558,71 @@
 
       <p class="hint" id="projHint">
         执行完第 ③ 行，浏览器打开 <b id="projUrl">http://127.0.0.1:8848</b> 就能看到项目跑起来了。
-        第 ② 行里的 Key 在页面上是 <code>sk-••••••••3XYZ</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
+        第 ② 行里的 Key 在页面上是 <code>A1b2••••••••9Zk3</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
         它只写进你本机的 <code>config.json</code>，该文件已被 <code>.gitignore</code> 排除，不会进仓库、也不会进浏览器。
       </p>
       <div id="keyWarn" class="callout warn" style="margin:14px 0 0;display:none">
         <div>上面的命令里还是占位文字——请先把令牌粘贴到<b>第 4 步</b>的输入框里，命令会自动换成你自己的 Key。</div>
+      </div>
+
+      <!-- ====== WorkBuddy：把同一个 Key 接进桌面版 ====== -->
+      <span class="sec-anchor" id="workbuddy"></span>
+      <h3 style="margin:52px 0 8px;font-size:22px;letter-spacing:-.03em">把同一个 Key 接进 WorkBuddy 桌面版（可选）</h3>
+      <p style="margin:0 0 22px;color:#5e636b;font-size:14px;line-height:1.8;max-width:760px">
+        如果你在用 WorkBuddy 桌面版，这枚令牌可以直接填进它的<b>自定义模型</b>，
+        不用在终端里配环境变量——之后你在 WorkBuddy 里的对话就跑在沐曦的算力上。
+        选好模型和终端，下面这条命令会把配置<b>写进你本机的 <code>~/.workbuddy/models.json</code></b>：
+        已经配过别的自定义模型也不会被覆盖，同名的沐曦模型会被换成新的一份。
+      </p>
+
+      <div class="tool-grid" style="margin-bottom:12px;max-width:760px">
+        <div class="tool-option"><input type="radio" name="wbmodel" id="wbCoder" value="coder" checked /><label for="wbCoder">写代码 · Qwen3-Coder-30B</label></div>
+        <div class="tool-option"><input type="radio" name="wbmodel" id="wbVl" value="vl" /><label for="wbVl">要识图 · Qwen3-VL-30B</label></div>
+        <div class="tool-option"><input type="radio" name="wbmodel" id="wbBoth" value="both" /><label for="wbBoth">两个都装</label></div>
+      </div>
+      <p class="hint" style="margin:-6px 0 14px;max-width:760px">
+        识图那个模型平台侧不太稳：实测一分钟内连发三次，两次 502。只在真要它看图时选，报错重跑一次即可。
+      </p>
+
+      <div class="tool-grid" style="margin-bottom:18px;max-width:760px">
+        <div class="tool-option"><input type="radio" name="wbshell" id="wbPs" value="ps" checked /><label for="wbPs">PowerShell</label></div>
+        <div class="tool-option"><input type="radio" name="wbshell" id="wbCmd" value="cmd" /><label for="wbCmd">CMD</label></div>
+        <div class="tool-option"><input type="radio" name="wbshell" id="wbSh" value="sh" /><label for="wbSh">macOS · Linux</label></div>
+      </div>
+      <p class="hint" style="margin:-8px 0 14px">分不清 Windows 的两个终端：提示符开头带 <code>PS</code> 的是 PowerShell，不带的是 CMD。</p>
+
+      <div class="cli-cmd" data-os="any"><span class="os">写入 WorkBuddy 自定义模型</span><code data-copy id="cmdWb">python -c "..."</code><span class="copyic">复制</span></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 10px">
+        <button class="button primary sm" id="copyWbBtn" type="button">⧉ 复制这条命令</button>
+        <a class="button ghost sm" href="https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp/tree/master/docs/workbuddy-model.md" target="_blank" rel="noreferrer">手动配置步骤与排错 ↗</a>
+      </div>
+      <p class="hint" style="margin:0 0 12px">
+        命令里的令牌在页面上是 <code>A1b2••••••••9Zk3</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
+        跑完之后<b>完全退出 WorkBuddy 再启动</b>（托盘里也要退出），模型下拉里就会出现它。
+      </p>
+      <div id="wbWarn" class="callout warn" style="margin:0 0 12px;display:none">
+        <div>这条命令里还是占位文字——请先把令牌粘贴到<b>第 4 步</b>的输入框里，命令会自动换成你自己的 Key。</div>
+      </div>
+
+      <div class="faq">
+        <details class="qa"><summary>这条命令到底往哪儿写了什么？</summary><div class="qa-body">
+          <ul>
+            <li>写入位置：<code>~/.workbuddy/models.json</code>（Windows 上是 <code>C:\Users\&lt;你&gt;\.workbuddy\models.json</code>）。</li>
+            <li>它先读出已有内容，<b>只替换 id 相同的沐曦模型</b>，你自己配过的其它自定义模型会原样保留。</li>
+            <li>写进去的字段：接口地址 <code>https://api.moark.com/v1/chat/completions</code>、模型 ID、以及工具调用等能力开关。</li>
+            <li>令牌以明文存在你本机这个文件里，<b>不要提交到任何仓库，也不要截图发出去</b>。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>接进去之后要注意什么？</summary><div class="qa-body">
+          <ul>
+            <li><b>别选 internlm3-8b-instruct</b>：它不支持工具调用，接进去每次对话都会返回 400。</li>
+            <li>模型下拉里看不到新模型：手改文件后必须<b>完全退出</b>客户端再启动才会刷新。</li>
+            <li>验证方法：切到「沐曦 Qwen3-Coder-30B」，发一句「只回复两个字：在」，能回就说明链路通了。</li>
+            <li>想一次验全四项能力（对话 / 工具调用 / 流式 / 长上下文），仓库里有 <code>tools/check_workbuddy_model.py</code>。</li>
+          </ul>
+        </div></details>
       </div>
 
       <span class="sec-anchor" id="faq"></span>
@@ -1048,10 +1112,11 @@
     }
     // 页面上只显示「遮蔽形」：尾四位用于自己核对是哪一枚令牌，其余一律圆点。
     // 完整值从不写进 DOM 的文本节点，只在点「复制」时进剪贴板。
+    // 保留真实的前四位与后四位：令牌不一定以 sk- 开头，写死前缀会让人以为填错了
     function maskKey(k) {
-      if (!k) return 'sk-' + '•'.repeat(12);
+      if (!k) return '•'.repeat(12);
       if (k.length <= 8) return '•'.repeat(k.length);
-      return 'sk-' + '•'.repeat(8) + k.slice(-4);
+      return k.slice(0, 4) + '•'.repeat(8) + k.slice(-4);
     }
     function buildPy(key) {
       return 'python -c "import json,shutil;shutil.copy(\'config.example.json\',\'config.json\');' +
@@ -1087,6 +1152,74 @@
     $$('input[name="shell"]').forEach(function (r) { r.addEventListener('change', writeCmd); });
     if (tokenEl) tokenEl.addEventListener('input', writeCmd);
     writeCmd();
+
+    /* ---- WorkBuddy 自定义模型：把 Key 一起生成进「写文件」命令 ---- */
+    var WB = {
+      // name 一律用 ASCII：CMD 的默认代码页是 GBK，命令里出现中文会把结尾的引号吃掉
+      coder: { id: 'Qwen3-Coder-30B-A3B-Instruct', name: 'MetaX Qwen3-Coder-30B', img: 'False' },
+      vl: { id: 'Qwen3-VL-30B-A3B-Instruct', name: 'MetaX Qwen3-VL (vision)', img: 'True' }
+    };
+    var cmdWbEl = $('#cmdWb'), wbWarnEl = $('#wbWarn');
+
+    function wbIds() {
+      var el = document.querySelector('input[name="wbmodel"]:checked');
+      var v = el ? el.value : 'coder';
+      return v === 'both' ? ['coder', 'vl'] : [v];
+    }
+    function wbShell() {
+      var el = document.querySelector('input[name="wbshell"]:checked');
+      return el ? el.value : 'ps';
+    }
+    // Python 代码里只用单引号，外层统一用双引号包住 —— PowerShell / CMD / bash 都能原样吃下，
+    // 不用再为两种 Windows 终端各写一套（这就是不在命令里出现双引号的原因）。
+    function buildWbPy(key, ids) {
+      var items = ids.map(function (k) {
+        var m = WB[k];
+        return "{'id':'" + m.id + "','name':'" + m.name + "','model':'" + m.id + "'," +
+               "'vendor':'custom','provider':'custom'," +
+               "'url':'https://api.moark.com/v1/chat/completions','apiKey':'" + key + "'," +
+               "'maxInputTokens':32768,'maxOutputTokens':8192,'supportsToolCall':True," +
+               "'supportsImages':" + m.img + ",'supportsReasoning':False,'temperature':0.7}";
+      }).join(',');
+      var keep = "('" + ids.map(function (k) { return WB[k].id; }).join("','") + "',)";
+      return "import json,pathlib;p=pathlib.Path.home()/'.workbuddy'/'models.json';" +
+             "d=json.loads(p.read_text(encoding='utf-8')) if p.exists() else {'models':[]};" +
+             "keep=" + keep + ";" +
+             "d['models']=[m for m in d.get('models',[]) if m.get('id') not in keep]+[" + items + "];" +
+             "p.parent.mkdir(parents=True,exist_ok=True);" +
+             "p.write_text(json.dumps(d,ensure_ascii=False,indent=2),encoding='utf-8');" +
+             "print('models.json updated:',p)";
+    }
+    function wbPyCmd(key, ids) {
+      return (wbShell() === 'sh' ? 'python3' : 'python') + ' -c "' + buildWbPy(key, ids) + '"';
+    }
+    function writeWbCmd() {
+      if (!cmdWbEl) return;
+      var k = tokenOrPlaceholder(), ids = wbIds();
+      var shown = k ? maskKey(k) : '在这里粘贴你的令牌';
+      cmdWbEl.textContent = wbPyCmd(shown, ids);
+      cmdWbEl.setAttribute('data-real', wbPyCmd(k || '在这里粘贴你的令牌', ids));
+      if (wbWarnEl) wbWarnEl.style.display = k ? 'none' : '';
+    }
+    // 非 Windows 默认给 macOS · Linux 那一行，Windows 默认 PowerShell
+    (function () {
+      if (OS === 'mac' || OS === 'linux' || OS === 'other') {
+        var sh = document.getElementById('wbSh');
+        if (sh) sh.checked = true;
+      }
+    })();
+    $$('input[name="wbmodel"]').forEach(function (r) { r.addEventListener('change', writeWbCmd); });
+    $$('input[name="wbshell"]').forEach(function (r) { r.addEventListener('change', writeWbCmd); });
+    if (tokenEl) tokenEl.addEventListener('input', writeWbCmd);
+    writeWbCmd();
+
+    var copyWbBtn = $('#copyWbBtn');
+    if (copyWbBtn) {
+      copyWbBtn.addEventListener('click', function () {
+        var t = cmdWbEl ? (cmdWbEl.getAttribute('data-real') || cmdWbEl.textContent.trim()) : '';
+        copyText(t, '命令已复制 · 含真实令牌，粘进终端后请勿截屏');
+      });
+    }
 
     var copyAllBtn = $('#copyAllBtn');
     if (copyAllBtn) {
