@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#159b73" />
-  <meta name="description" content="沐曦 Coding Agent 配置中心：10 分钟内把模力方舟 Token 接入 Codex / Claude Code / OpenCode，含新手分步向导、环境自检与排错手册。" />
+  <meta name="description" content="沐曦 Coding Agent 配置中心：10 分钟内把模力方舟 Token 接入 Codex / Claude Code / WorkBuddy，含新手分步向导、环境自检与排错手册。" />
   <title>沐曦 Coding Agent 配置中心 · 新手版</title>
   <style>
     :root { --green:#159b73; --green-dark:#087452; --green-soft:#e8f6f0; --purple:#7356c9; --purple-dark:#563ba8; --ink:#16181d; --muted:#6b7078; --line:#e5e4ea; --paper:#fff; --lavender:#f3f1fa; --warn:#b4530a; --warn-bg:#fff7ed; --danger:#c0392b; --danger-bg:#fef3f2; }
@@ -121,6 +121,24 @@
     .tool-option label { display:flex; align-items:center; justify-content:center; min-height:51px; margin:0; border:1px solid #d9dbd7; border-radius:2px; color:#60656d; background:#fbfbf9; cursor:pointer; font-size:13px; }
     .tool-option input:checked + label { border-color:var(--purple); color:var(--purple-dark); background:#f8f6ff; box-shadow:inset 0 -2px 0 var(--purple); }
 
+    /* ---------- WorkBuddy：模型多选 + 一键脚本 ---------- */
+    .wb-step { margin:0 0 10px; font-size:13px; font-weight:800; color:#2c3038; letter-spacing:.01em; }
+    .wb-step span { margin-left:8px; font-weight:600; color:#8a8e93; font-size:11.5px; }
+    .wb-list { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:10px; max-width:760px; }
+    .wb-item { display:flex; gap:9px; align-items:flex-start; padding:10px 12px; border:1px solid #d9dbd7; background:#fbfbf9; border-radius:2px; cursor:pointer; transition:.15s; }
+    .wb-item input { flex:0 0 auto; width:auto; height:auto; margin:2px 0 0; accent-color:var(--purple); }
+    .wb-item .wb-name { display:block; font-size:12.5px; font-weight:800; color:#3a3e45; line-height:1.45; overflow-wrap:anywhere; }
+    .wb-item .wb-sub { display:block; margin-top:2px; font-size:11px; color:#8a8e93; line-height:1.5; }
+    .wb-item .wb-flag { display:inline-block; margin-left:6px; padding:0 4px; border-radius:2px; background:#fdecea; color:#b3261e; font:800 9.5px/1.7 ui-monospace,monospace; vertical-align:1px; }
+    .wb-item.on { border-color:var(--purple); background:#f8f6ff; box-shadow:inset 0 -2px 0 var(--purple); }
+    .wb-item.on .wb-name { color:var(--purple-dark); }
+    .wb-custom { display:flex; flex-wrap:wrap; align-items:center; gap:9px; max-width:760px; padding:11px 12px; border:1px dashed #d3d5d0; background:#fbfbf9; }
+    .wb-custom > label { margin:0; font-size:11.5px; font-weight:700; color:#60656d; white-space:nowrap; }
+    .wb-custom input[type="text"] { flex:1 1 230px; min-width:0; height:33px; margin:0; font:12px/1.4 ui-monospace,monospace; }
+    .wb-custom .wb-ctl { display:inline-flex; align-items:center; gap:5px; font-weight:600; }
+    .wb-custom .wb-ctl input { width:auto; height:auto; margin:0; }
+    .wb-dl { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:9px; }
+
     /* ---------- preview ---------- */
     .builder { display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; }
     .preview { position:sticky; top:93px; }
@@ -224,6 +242,7 @@
       h1 { font-size:40px; }
       .stats { grid-template-columns:1fr; } .stat { padding:18px 22px; }
       .tool-grid { grid-template-columns:1fr; } .panel-body { padding:17px; }
+      .wb-list { grid-template-columns:1fr; }
       .preview-footer { align-items:flex-start; flex-direction:column; }
       .footer-inner span { display:block; margin-top:7px; }
       .toast { left:16px; right:16px; max-width:none; }
@@ -250,7 +269,7 @@
       <div>
         <div class="eyebrow">METAX · 曦云 C 系列</div>
         <h1>让国产算力，<br><em>直接进入</em>你的代码。</h1>
-        <p class="hero-copy">沐曦专属 Coding Agent 配置中心。把你的模力方舟访问令牌接进来，在熟悉的开发工具里直接调用编程模型。<b>本页按「六步」组织，完全没用过命令行的同学从上往下照着做即可。</b></p>
+        <p class="hero-copy">沐曦专属 Coding Agent 配置中心。把你的模力方舟访问令牌接进来，在熟悉的开发工具里直接调用编程模型。<b>本页按「七步」组织，完全没用过命令行的同学从上往下照着做即可。</b></p>
         <div class="hero-actions">
           <a class="button primary" href="#step-token">从第一步开始 <span>↓</span></a>
           <a class="button ghost" href="#faq">我卡住了 / 报错了</a>
@@ -259,8 +278,8 @@
     </section>
 
     <div class="stats">
-      <div class="stat wrap-stat"><strong>6 步</strong><span>拿 Token → 装 CLI → 装 CC Switch → 生成配置 → 验证 → 交给课程项目</span></div>
-      <div class="stat"><strong>3 种工具</strong><span>Codex / Claude Code / OpenCode，一次配置可复用</span></div>
+      <div class="stat wrap-stat"><strong>7 步</strong><span>拿 Token → 装工具 → 装 CC Switch → 生成配置 → 验证 → 交给课程项目 → 接入 WorkBuddy</span></div>
+      <div class="stat"><strong>3 种工具</strong><span>Codex / Claude Code / WorkBuddy，一次配置可复用</span></div>
       <div class="stat"><strong>100% 本地</strong><span>密钥只在浏览器里参与生成，不会上传到任何服务器</span></div>
     </div>
 
@@ -281,7 +300,7 @@
           <span class="rsep"></span>
           <a class="rstep" data-key="t6" href="#course-projects"><i><span>6</span></i> 用课程项目</a>
           <span class="rsep"></span>
-          <a class="rstep" data-key="t7" href="#workbuddy"><i><span>7</span></i> 接入 WorkBuddy</a>
+          <a class="rstep" data-key="t7" href="#workbuddy"><i><span>7</span></i> 装多个模型</a>
         </div>
         <div class="env-bar" id="envBar">
           <span>当前环境：<b id="envOs">检测中…</b></span>
@@ -325,8 +344,8 @@
     <span class="sec-anchor" id="install-cli"></span>
     <section class="wrap section">
       <div class="section-head">
-        <div><div class="section-kicker">STEP 02 / INSTALL CLI</div><h2>装一个编码 Agent 命令行</h2></div>
-        <p class="section-note">三种任选其一即可，<b>不确定选哪个就选 Codex</b>。已按你的系统高亮对应命令，点一下命令即可复制。</p>
+        <div><div class="section-kicker">STEP 02 / INSTALL</div><h2>装一个编码 Agent</h2></div>
+        <p class="section-note">三种任选其一即可，<b>不确定选哪个就选 Codex</b>。已按你的系统高亮对应命令，点一下命令即可复制。<b>WorkBuddy 是桌面客户端</b>，不用 Node、也不用命令行，下载装完就能用。</p>
       </div>
 
       <div class="callout warn">
@@ -341,7 +360,7 @@
           <p>OpenAI 官方命令行编码助手，支持自定义模型提供商。<b>本页默认推荐。</b></p>
           <div class="cli-cmd" data-os="any"><span class="os">Windows · macOS · Linux</span><code data-copy>npm install -g @openai/codex</code><span class="copyic">复制</span></div>
           <div class="cli-cmd" data-os="any"><span class="os">验证安装</span><code data-copy>codex --version</code><span class="copyic">复制</span></div>
-          <p class="cli-tip">macOS 也可用 <b>brew install --cask codex</b>。装完若提示 <b>command not found</b>，请关掉终端重新开一个。</p>
+          <p class="cli-tip">macOS 也可用 <b>brew install --cask codex</b>。装完若提示 <b>command not found</b>，请关掉终端重新开一个。想省掉命令行，就选右边的 WorkBuddy。</p>
         </article>
 
         <article class="cli-card">
@@ -356,13 +375,11 @@
         </article>
 
         <article class="cli-card">
-          <div class="cli-head"><span class="tool-icon">⌘</span><span class="ver">开源 · 跨平台</span></div>
-          <h3>OpenCode</h3>
-          <p>开源终端编码 Agent，通过配置文件接入任意 OpenAI 兼容接口。</p>
-          <div class="cli-cmd" data-os="maclinux"><span class="os">macOS · Linux</span><code data-copy>curl -fsSL https://opencode.ai/install | bash</code><span class="copyic">复制</span></div>
-          <div class="cli-cmd" data-os="any"><span class="os">Windows · 任意平台</span><code data-copy>npm install -g opencode-ai</code><span class="copyic">复制</span></div>
-          <div class="cli-cmd" data-os="any"><span class="os">验证安装</span><code data-copy>opencode --version</code><span class="copyic">复制</span></div>
-          <p class="cli-tip">装完在终端输入 <b>opencode</b> 即可启动。首次启动会生成配置目录，之后再写入配置。</p>
+          <div class="cli-head"><span class="tool-icon">◇</span><span class="ver">桌面客户端 · 免命令行</span></div>
+          <h3>WorkBuddy</h3>
+          <p>桌面版 AI 编码助手，设置里能加自定义模型。<b>不用命令行，也不用装 CC Switch。</b></p>
+          <div class="cli-cmd" data-os="any"><span class="os">官网下载（Win / macOS / Linux）</span><code data-copy>https://www.workbuddy.cn/</code><span class="copyic">复制</span></div>
+          <p class="cli-tip">装完打开客户端就行，模型配置在第 4 步生成——选 WorkBuddy 会自动变成<b>下载一键脚本</b>。写完要<b>完全退出</b>（托盘图标也退）再启动，模型才会出现在下拉里。</p>
         </article>
       </div>
     </section>
@@ -372,7 +389,7 @@
       <div class="wrap">
         <div class="section-head">
           <div><div class="section-kicker">STEP 03 / DESKTOP BRIDGE</div><h2>装 CC Switch（关键一步）</h2></div>
-          <p class="section-note">CC Switch 是本地桌面配置桥。<b>必须先装它，第 4 步的「一键导入」才有接收方。</b>没装就点导入，浏览器会没有反应。</p>
+          <p class="section-note">CC Switch 是本地桌面配置桥。<b>必须先装它，第 4 步的「一键导入」才有接收方。</b>没装就点导入，浏览器会没有反应。<br><b>只用 WorkBuddy 的同学可以跳过这一步</b>——它靠第 4 步下载的脚本直接写配置文件，不需要导入桥。</p>
         </div>
 
         <div class="callout warn">
@@ -472,8 +489,9 @@
               <div class="tool-grid">
                 <div class="tool-option"><input type="radio" name="tool" id="codex" value="codex" checked /><label for="codex">◎ Codex</label></div>
                 <div class="tool-option"><input type="radio" name="tool" id="claude" value="claude" /><label for="claude">✦ Claude Code</label></div>
-                <div class="tool-option"><input type="radio" name="tool" id="opencode" value="opencode" /><label for="opencode">⌘ OpenCode</label></div>
+                <div class="tool-option"><input type="radio" name="tool" id="toolWb" value="workbuddy" /><label for="toolWb">◇ WorkBuddy</label></div>
               </div>
+              <p class="hint" style="margin:0 0 16px">选 WorkBuddy 不用装 CC Switch，也没有 <code>ccswitch://</code> 协议可用，所以下面那颗按钮会自动变成<b>下载一键脚本</b>（双击运行就写完）。想把多个模型一次装进去，去<a href="#workbuddy">第 7 步</a>勾选。</p>
             </div>
 
             <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px">
@@ -483,7 +501,7 @@
             <div id="testResult" style="display:none;margin-bottom:16px"></div>
 
             <button class="button primary" id="importBtn" type="button" style="width:100%">生成并导入配置 <span>↗</span></button>
-            <p class="hint" style="margin-top:10px">没有装 CC Switch、或弹窗被拦截时，可点击右侧「复制配置」手动写入文件，文件路径见右侧说明。</p>
+            <p class="hint" id="importHint" style="margin-top:10px">没有装 CC Switch、或弹窗被拦截时，可点击右侧「复制配置」手动写入文件，文件路径见右侧说明。</p>
           </div>
         </div>
 
@@ -517,12 +535,12 @@
     <section class="wrap section">
       <div class="section-head">
         <div><div class="section-kicker">STEP 05 / VERIFY</div><h2>验证它真的能用了</h2></div>
-        <p class="section-note">配置导入后必须<b>完全退出终端再重开</b>，然后跑一句最简单的提问。能看到回答，才算真的成功。</p>
+        <p class="section-note">配置写完必须<b>完全退出终端再重开</b>（选的是 WorkBuddy 就退出客户端，托盘图标也退），然后问一句最简单的话。能看到回答，才算真的成功。</p>
       </div>
 
       <div class="steps">
         <article class="step-card"><b>01 — 重开终端</b><h3>关闭并重新打开终端</h3><p>新开的窗口才会加载最新的环境变量与配置。已开着的窗口改了配置也不会生效——这是最容易踩的坑。</p></article>
-        <article class="step-card"><b>02 — 启动工具</b><h3>运行 <code style="font-size:12px">codex</code> / <code style="font-size:12px">claude</code> / <code style="font-size:12px">opencode</code></h3><p>直接输入对应命令回车。如果是 Claude Code，可用 <code style="font-size:12px">/model</code> 确认模型映射是否指向了沐曦的模型。</p></article>
+        <article class="step-card"><b>02 — 启动工具</b><h3>运行 <code style="font-size:12px">codex</code> / <code style="font-size:12px">claude</code>，或打开 WorkBuddy</h3><p>终端里直接输入对应命令回车；WorkBuddy 则是打开客户端，在模型下拉里切到 <code style="font-size:12px">MetaX Qwen3-Coder-30B</code>。Claude Code 可用 <code style="font-size:12px">/model</code> 确认模型映射是否指向沐曦的模型。</p></article>
         <article class="step-card"><b>03 — 发一句话</b><h3>输入「用 Python 写一个冒泡排序」</h3><p>能正常返回代码 = 配置成功。若报错，直接对照下方 FAQ 的报错信息排查。</p></article>
       </div>
 
@@ -567,60 +585,91 @@
 
       <!-- ====== WorkBuddy：把同一个 Key 接进桌面版 ====== -->
       <span class="sec-anchor" id="workbuddy"></span>
-      <h3 style="margin:52px 0 8px;font-size:22px;letter-spacing:-.03em">把同一个 Key 接进 WorkBuddy 桌面版（可选）</h3>
+      <h3 style="margin:52px 0 8px;font-size:22px;letter-spacing:-.03em">一次把多个模型装进 WorkBuddy（可选）</h3>
       <p style="margin:0 0 22px;color:#5e636b;font-size:14px;line-height:1.8;max-width:760px">
-        如果你在用 WorkBuddy 桌面版，这枚令牌可以直接填进它的<b>自定义模型</b>，
-        不用在终端里配环境变量——之后你在 WorkBuddy 里的对话就跑在沐曦的算力上。
-        选好模型和终端，下面这条命令会把配置<b>写进你本机的 <code>~/.workbuddy/models.json</code></b>：
-        已经配过别的自定义模型也不会被覆盖，同名的沐曦模型会被换成新的一份。
+        第 4 步选 WorkBuddy 时，只会写进当前下拉里的<b>那一个</b>模型。
+        想同时装「写代码的 + 识图的 + 你自己填的」，在这里勾——<b>写的是同一个文件，重复跑也不会重复添加</b>。
+        选好模型和系统后<b>下载一键脚本双击运行</b>就写完了；不想下脚本的，也可以复制命令自己粘进终端。
       </p>
 
-      <div class="tool-grid" style="margin-bottom:12px;max-width:760px">
-        <div class="tool-option"><input type="radio" name="wbmodel" id="wbCoder" value="coder" checked /><label for="wbCoder">写代码 · Qwen3-Coder-30B</label></div>
-        <div class="tool-option"><input type="radio" name="wbmodel" id="wbVl" value="vl" /><label for="wbVl">要识图 · Qwen3-VL-30B</label></div>
-        <div class="tool-option"><input type="radio" name="wbmodel" id="wbBoth" value="both" /><label for="wbBoth">两个都装</label></div>
+      <p class="wb-step">① 选模型<span>可多选，装几个都行</span></p>
+      <div class="wb-list" id="wbList"></div>
+      <div class="wb-custom">
+        <label for="wbCustomId">其他模型 ID</label>
+        <input id="wbCustomId" type="text" placeholder="从平台模型列表复制，例如 Qwen3-32B" autocomplete="off" spellcheck="false" />
+        <label class="wb-ctl" for="wbCustomTool"><input type="checkbox" id="wbCustomTool" checked /> 支持工具调用</label>
       </div>
-      <p class="hint" style="margin:-6px 0 14px;max-width:760px">
-        识图那个模型平台侧不太稳：实测一分钟内连发三次，两次 502。只在真要它看图时选，报错重跑一次即可。
+      <p class="hint" style="margin:9px 0 24px;max-width:760px">
+        平台的模型列表里有 214 个，但<b>能用哪些由你绑定的资源包决定</b>；而且不是每个模型都开了工具调用，
+        没开的接进 WorkBuddy 会一直 400。上面标了「带工具会 400」的三个是实测结果。
+        想装列表外的模型，把 ID 填进上面那一格就行，报错对照：
+        <code>不支持当前模型或算力</code> = 资源包没覆盖；<code>tool-call-parser</code> = 该模型当不了 Agent。
       </p>
 
+      <p class="wb-step">② 选系统<span>只影响下面那条命令怎么写</span></p>
       <div class="tool-grid" style="margin-bottom:18px;max-width:760px">
         <div class="tool-option"><input type="radio" name="wbshell" id="wbPs" value="ps" checked /><label for="wbPs">PowerShell</label></div>
         <div class="tool-option"><input type="radio" name="wbshell" id="wbCmd" value="cmd" /><label for="wbCmd">CMD</label></div>
         <div class="tool-option"><input type="radio" name="wbshell" id="wbSh" value="sh" /><label for="wbSh">macOS · Linux</label></div>
       </div>
-      <p class="hint" style="margin:-8px 0 14px">分不清 Windows 的两个终端：提示符开头带 <code>PS</code> 的是 PowerShell，不带的是 CMD。</p>
+      <p class="hint" style="margin:-8px 0 24px">分不清 Windows 的两个终端：提示符开头带 <code>PS</code> 的是 PowerShell，不带的是 CMD。</p>
 
-      <div class="cli-cmd" data-os="any"><span class="os">写入 WorkBuddy 自定义模型</span><code data-copy id="cmdWb">python -c "..."</code><span class="copyic">复制</span></div>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 10px">
-        <button class="button primary sm" id="copyWbBtn" type="button">⧉ 复制这条命令</button>
-        <a class="button ghost sm" href="https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp/tree/master/docs/workbuddy-model.md" target="_blank" rel="noreferrer">手动配置步骤与排错 ↗</a>
+      <p class="wb-step">③ 写进去<span>两种方式选一种</span></p>
+      <div class="wb-dl">
+        <button class="button primary sm" id="dlBat" type="button">⤓ 下载 Windows 一键脚本</button>
+        <button class="button ghost sm" id="dlSh" type="button">⤓ 下载 macOS 一键脚本</button>
       </div>
+      <p class="hint" style="margin:0 0 14px;max-width:760px">
+        下载后双击就写完了，第二步的系统不用管。
+        Windows 若弹出「Windows 已保护你的电脑」，点<b>更多信息 → 仍要运行</b>；
+        macOS 若提示无法打开，右键 → 打开。脚本里带着你的令牌，<b>用完就删掉这个文件</b>。
+      </p>
+
+      <details class="qa" style="margin-bottom:16px"><summary>或者：复制一条命令自己跑</summary><div class="qa-body">
+        <div class="cli-cmd" data-os="any" style="margin-top:4px"><span class="os">写入 WorkBuddy 自定义模型</span><code data-copy id="cmdWb">python -c "..."</code><span class="copyic">复制</span></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 8px">
+          <button class="button ghost sm" id="copyWbBtn" type="button">⧉ 复制这条命令</button>
+          <a class="button ghost sm" href="https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp/tree/master/docs/workbuddy-model.md" target="_blank" rel="noreferrer">手动配置步骤与排错 ↗</a>
+        </div>
+        <p class="hint" style="margin:0">
+          命令里的令牌在页面上是 <code>A1b2••••••••9Zk3</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
+        </p>
+      </div></details>
+
       <p class="hint" style="margin:0 0 12px">
-        命令里的令牌在页面上是 <code>A1b2••••••••9Zk3</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
-        跑完之后<b>完全退出 WorkBuddy 再启动</b>（托盘里也要退出），模型下拉里就会出现它。
+        写完之后<b>完全退出 WorkBuddy 再启动</b>（托盘里也要退出），模型下拉里才会出现新加的这几个。
       </p>
       <div id="wbWarn" class="callout warn" style="margin:0 0 12px;display:none">
-        <div>这条命令里还是占位文字——请先把令牌粘贴到<b>第 4 步</b>的输入框里，命令会自动换成你自己的 Key。</div>
+        <div>还差令牌——请先把令牌粘贴到<b>第 4 步</b>的输入框里，脚本和命令才会换成你自己的 Key。</div>
       </div>
 
       <div class="faq">
-        <details class="qa"><summary>这条命令到底往哪儿写了什么？</summary><div class="qa-body">
+        <details class="qa"><summary>一键脚本到底往哪儿写了什么？</summary><div class="qa-body">
           <ul>
             <li>写入位置：<code>~/.workbuddy/models.json</code>（Windows 上是 <code>C:\Users\&lt;你&gt;\.workbuddy\models.json</code>）。</li>
-            <li>它先读出已有内容，<b>只替换 id 相同的沐曦模型</b>，你自己配过的其它自定义模型会原样保留。</li>
-            <li>写进去的字段：接口地址 <code>https://api.moark.com/v1/chat/completions</code>、模型 ID、以及工具调用等能力开关。</li>
-            <li>令牌以明文存在你本机这个文件里，<b>不要提交到任何仓库，也不要截图发出去</b>。</li>
+            <li>它先读出已有内容，<b>只替换 id 和你勾选的那几个相同的条目</b>，你自己配过的其它自定义模型会原样保留。重复跑多少次都一样。</li>
+            <li>写进去的字段：接口地址 <code>https://api.moark.com/v1/chat/completions</code>、模型 ID、以及工具调用、识图等能力开关。</li>
+            <li>令牌以明文存在你本机这个文件里（脚本文件里也有一份），<b>不要提交到任何仓库，也不要截图发出去</b>；脚本用完就删。</li>
+          </ul>
+        </div></details>
+
+        <details class="qa"><summary>为什么有的模型标着「带工具会 400」？</summary><div class="qa-body">
+          <ul>
+            <li>WorkBuddy 每次对话都会带上工具定义，要求模型支持 <code>tools</code> 参数。<b>平台只给部分模型开了工具解析</b>，没开的会回
+                <code>"auto" tool choice requires --enable-auto-tool-choice and --tool-call-parser</code>。</li>
+            <li>实测（2026-11-03）：<code>Qwen3-Coder-30B</code>、<code>Qwen3-VL-30B</code>、<code>GLM-5.3</code> 可以；
+                <code>internlm3-8b-instruct</code>、<code>InternVL3-78B</code>、<code>Fin-R1</code>、<code>HY-MT2-7B</code>、<code>Qwen3-8B</code> 不行。</li>
+            <li>标了也能勾：勾上后写进去的是 <code>supportsToolCall: False</code>，它以纯聊天模型出现在下拉里，不能干活但能对话。</li>
+            <li>反悔了：在 <code>~/.workbuddy/models.json</code> 里删掉那一段，或重跑一次脚本、只勾能用的。</li>
           </ul>
         </div></details>
 
         <details class="qa"><summary>接进去之后要注意什么？</summary><div class="qa-body">
           <ul>
-            <li><b>别选 internlm3-8b-instruct</b>：它不支持工具调用，接进去每次对话都会返回 400。</li>
-            <li>模型下拉里看不到新模型：手改文件后必须<b>完全退出</b>客户端再启动才会刷新。</li>
-            <li>验证方法：切到「沐曦 Qwen3-Coder-30B」，发一句「只回复两个字：在」，能回就说明链路通了。</li>
+            <li>模型下拉里看不到新模型：写完必须<b>完全退出</b>客户端再启动才会刷新（托盘图标也要退出）。</li>
+            <li>验证方法：切到「MetaX Qwen3-Coder-30B」，发一句「只回复两个字：在」，能回就说明链路通了。</li>
             <li>想一次验全四项能力（对话 / 工具调用 / 流式 / 长上下文），仓库里有 <code>tools/check_workbuddy_model.py</code>。</li>
+            <li>报 <code>不支持当前模型或算力</code>：这枚令牌绑定的资源包没覆盖这个模型，换回 Qwen3-Coder，或去平台加资源包。</li>
           </ul>
         </div></details>
       </div>
@@ -659,7 +708,7 @@
           <ul>
             <li><b>彻底关掉终端再重新打开</b>。仅切标签页不算，最好整个退出进程。</li>
             <li>确认 CC Switch 里对应的供应商卡片是「当前启用」状态（通常有高亮边框）。</li>
-            <li>Claude Code 一般支持热加载；Codex / OpenCode 通常需要重启。</li>
+            <li>Claude Code 一般支持热加载；Codex 与 WorkBuddy 都要<b>完全退出</b>再启动（WorkBuddy 连托盘图标一起退）。</li>
             <li>检查是否同时存在多个配置来源冲突（比如你既改了 shell 里的环境变量，又用 CC Switch 导入了一份）。</li>
           </ul>
         </details>
@@ -684,7 +733,7 @@
           <ul>
             <li>检查本机网络能否访问 <code>moark.com</code>（浏览器打开试试）。</li>
             <li>公司网络 / 代理可能拦截了 API 域名，换一个网络环境试试。</li>
-            <li>确认请求地址填对了：Codex 用 <code>https://moark.com/v1</code>，Claude Code 用 <code>https://moark.com/anthropic</code>，OpenCode 用 <code>https://ai.gitee.com/v1</code>，三者不通用。</li>
+            <li>确认请求地址填对了：Codex 用 <code>https://moark.com/v1</code>，Claude Code 用 <code>https://moark.com/anthropic</code>，WorkBuddy 用 <code>https://api.moark.com/v1/chat/completions</code>，三者不通用。</li>
           </ul>
         </div></details>
 
@@ -729,10 +778,12 @@
     var endpoint = {
       codex: 'https://moark.com/v1',
       claude: 'https://moark.com/anthropic',
-      opencode: 'https://ai.gitee.com/v1'
+      workbuddy: 'https://api.moark.com/v1/chat/completions'
     };
-    var toolLabel = { codex: 'Codex', claude: 'Claude Code', opencode: 'OpenCode' };
-    var fileName = { codex: 'config.toml', claude: 'settings.json', opencode: 'opencode.json' };
+    // 实测能被 WorkBuddy 当 Agent 用的模型（每次对话都带 tools，没开解析的会 400）
+    var WB_TOOL_OK = ['Qwen3-Coder-30B-A3B-Instruct', 'Qwen3-VL-30B-A3B-Instruct', 'GLM-5.3'];
+    var toolLabel = { codex: 'Codex', claude: 'Claude Code', workbuddy: 'WorkBuddy' };
+    var fileName = { codex: 'config.toml', claude: 'settings.json', workbuddy: 'models.json' };
 
     var tokenEl = document.querySelector('input#token');
     var modelEl = document.querySelector('select#model');
@@ -920,15 +971,25 @@
           }
         }, null, 2);
       }
-      var o = { $schema: 'https://opencode.ai/config.json', provider: {}, model: 'moark/' + m };
-      o.provider.moark = {
-        npm: '@ai-sdk/openai-compatible',
-        name: '沐曦 / 模力方舟',
-        options: { baseURL: endpoint.opencode, apiKey: k },
-        models: {}
-      };
-      o.provider.moark.models[m] = { name: m };
-      return JSON.stringify(o, null, 2);
+      // WorkBuddy 读的是 models.json：一个 models 数组，每一项是一个自定义模型。
+      // 这里只生成「下拉里选中的那一个」；想一次装多个去第 7 步勾。
+      return JSON.stringify({
+        models: [{
+          id: m,
+          name: m,
+          model: m,
+          vendor: 'custom',
+          provider: 'custom',
+          url: endpoint.workbuddy,
+          apiKey: k,
+          maxInputTokens: 32768,
+          maxOutputTokens: 8192,
+          supportsToolCall: WB_TOOL_OK.indexOf(m) >= 0,
+          supportsImages: /VL/i.test(m),
+          supportsReasoning: false,
+          temperature: 0.7
+        }]
+      }, null, 2);
     }
 
     /* ============ 语法高亮 ============ */
@@ -969,13 +1030,10 @@
         };
       }
       return {
-        badge: 'OPENCODE',
-        title: '手动配置：二选一',
-        rows: [
-          { role: '全局配置', path: homePath('~/.config/opencode/opencode.json') },
-          { role: '项目配置', path: homePath('./opencode.json') }
-        ],
-        note: '<b>手动配置说明：</b>把右侧 JSON 写入全局配置路径，或在某个项目根目录建 <code>opencode.json</code> 只对该项目生效。注意 OpenCode 这条链路的请求地址是 <code>https://ai.gitee.com/v1</code>，与其他两个工具不同。'
+        badge: 'WORKBUDDY',
+        title: '手动配置：只需 1 个文件',
+        rows: [{ role: '模型配置', path: homePath('~/.workbuddy/models.json') }],
+        note: '<b>WorkBuddy 没有 CC Switch 那种导入协议</b>，所以上面那颗按钮会变成<b>下载一键脚本</b>：双击运行就写好了，重复跑也只替换同一个模型。手动的话，把右侧 JSON 写进 <code>models.json</code>——<b>文件里已经有别的模型时不要整体覆盖</b>，只把 <code>models</code> 数组里的那一项并进去。写完<b>完全退出客户端</b>（托盘图标也要退）再启动。'
       };
     }
     function renderFiles(t) {
@@ -1008,6 +1066,17 @@
       if (wt) wt.textContent = fileName[t];
       if (previewEl) previewEl.innerHTML = highlight(configText(false), t === 'codex' ? 'toml' : 'json');
       renderFiles(t);
+      // WorkBuddy 没有导入协议：按钮从「导入」换成「下载脚本」，文案跟着换，别让人白点
+      var isWb = (t === 'workbuddy');
+      var ib = $('#importBtn'), ib2 = $('#importBtn2'), ih = $('#importHint');
+      if (ib) ib.innerHTML = isWb ? '⤓ 下载一键脚本（双击运行）' : '生成并导入配置 <span>↗</span>';
+      if (ib2) ib2.textContent = isWb ? '下载脚本' : '直接导入';
+      if (ih) ih.innerHTML = isWb
+        ? '脚本会写进 <code>~/.workbuddy/models.json</code>，重复运行只替换同一个模型，你自己配过的别的模型原样保留。'
+        : '没有装 CC Switch、或弹窗被拦截时，可点击右侧「复制配置」手动写入文件，文件路径见右侧说明。';
+      // 选 WorkBuddy 根本用不到 CC Switch，那条「还没装？」的红框留着只会让人以为漏做了步骤
+      var ns = $('#needSwitch'), sw = $('#switchDone');
+      if (ns) ns.style.display = (isWb || (sw && sw.checked)) ? 'none' : '';
     }
 
     /* ============ 事件绑定 ============ */
@@ -1064,6 +1133,16 @@
       if (!tokenEl.value.trim()) {
         tokenEl.focus();
         notify('请先在第 4 步输入你的模力方舟访问令牌', true);
+        return;
+      }
+      // WorkBuddy 没有 ccswitch 协议：直接给可双击运行的脚本，写的是同一份 models.json
+      if (selectedTool() === 'workbuddy') {
+        wbSave(OS === 'win' ? 'bat' : 'sh', tokenEl.value.trim(), [{
+          id: currentModel(),
+          name: currentModel(),
+          tool: WB_TOOL_OK.indexOf(currentModel()) >= 0,
+          img: /VL/i.test(currentModel())
+        }]);
         return;
       }
       var link = buildImportLink();
@@ -1153,35 +1232,74 @@
     if (tokenEl) tokenEl.addEventListener('input', writeCmd);
     writeCmd();
 
-    /* ---- WorkBuddy 自定义模型：把 Key 一起生成进「写文件」命令 ---- */
-    var WB = {
-      // name 一律用 ASCII：CMD 的默认代码页是 GBK，命令里出现中文会把结尾的引号吃掉
-      coder: { id: 'Qwen3-Coder-30B-A3B-Instruct', name: 'MetaX Qwen3-Coder-30B', img: 'False' },
-      vl: { id: 'Qwen3-VL-30B-A3B-Instruct', name: 'MetaX Qwen3-VL (vision)', img: 'True' }
-    };
-    var cmdWbEl = $('#cmdWb'), wbWarnEl = $('#wbWarn');
+    /* ---- WorkBuddy 自定义模型：任意模型 + 一键脚本 ---- */
+    // name 一律用 ASCII：CMD 的默认代码页是 GBK，命令行里出现中文会把结尾的引号吃掉。
+    // tool = 该模型是否支持工具调用（实测过，不支持的在页面上标红）。
+    var WB_MODELS = [
+      { id: 'Qwen3-Coder-30B-A3B-Instruct', name: 'MetaX Qwen3-Coder-30B', sub: '写代码主力 · 工具调用正常，实测最快', tool: true, img: false, on: true },
+      { id: 'Qwen3-VL-30B-A3B-Instruct', name: 'MetaX Qwen3-VL (vision)', sub: '能识图 · 工具调用正常，平台侧偶发 502', tool: true, img: true, on: false },
+      { id: 'GLM-5.3', name: 'GLM-5.3', sub: '能当 Agent，但响应慢、常返空正文', tool: true, img: false, on: false },
+      { id: 'internlm3-8b-instruct', name: 'internlm3-8b', sub: '轻量快，接进来只能纯聊天', tool: false, img: false, on: false },
+      { id: 'InternVL3-78B', name: 'InternVL3-78B', sub: '视觉对话，接进来只能纯聊天', tool: false, img: true, on: false },
+      { id: 'Qwen3-8B', name: 'Qwen3-8B', sub: '小模型，当前算力不支持 tools', tool: false, img: false, on: false }
+    ];
+    var cmdWbEl = $('#cmdWb'), wbWarnEl = $('#wbWarn'), wbListEl = $('#wbList');
+    var wbCustomEl = $('#wbCustomId'), wbCustomToolEl = $('#wbCustomTool');
+    var WB_ID_OK = /^[A-Za-z0-9._:\-]+$/;
 
-    function wbIds() {
-      var el = document.querySelector('input[name="wbmodel"]:checked');
-      var v = el ? el.value : 'coder';
-      return v === 'both' ? ['coder', 'vl'] : [v];
-    }
+    (function renderWbModels() {
+      if (!wbListEl) return;
+      wbListEl.innerHTML = WB_MODELS.map(function (m, i) {
+        return '<label class="wb-item' + (m.on ? ' on' : '') + '">' +
+          '<input type="checkbox" data-wb="' + i + '"' + (m.on ? ' checked' : '') + ' />' +
+          '<span><span class="wb-name">' + esc(m.id) +
+          (m.tool ? '' : '<span class="wb-flag">带工具会 400</span>') + '</span>' +
+          '<span class="wb-sub">' + esc(m.sub) + '</span></span></label>';
+      }).join('');
+      $$('#wbList input[data-wb]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          var item = cb.closest('.wb-item');
+          if (item) item.classList.toggle('on', cb.checked);
+          writeWbCmd();
+        });
+      });
+    })();
+
     function wbShell() {
       var el = document.querySelector('input[name="wbshell"]:checked');
       return el ? el.value : 'ps';
     }
+    // 勾选的模型 + 手填的那个（填了才算）
+    function wbPicked() {
+      var out = [];
+      $$('#wbList input[data-wb]').forEach(function (cb) {
+        if (cb.checked) out.push(WB_MODELS[+cb.getAttribute('data-wb')]);
+      });
+      var cid = wbCustomEl ? wbCustomEl.value.trim() : '';
+      if (cid) {
+        out.push({
+          id: cid,
+          // 显示名跟着 ID 走：手填的 ID 没有中文名，也不该在命令行里出现中文
+          name: cid.length > 30 ? cid.slice(0, 30) : cid,
+          tool: !!(wbCustomToolEl && wbCustomToolEl.checked),
+          img: false
+        });
+      }
+      return out;
+    }
     // Python 代码里只用单引号，外层统一用双引号包住 —— PowerShell / CMD / bash 都能原样吃下，
     // 不用再为两种 Windows 终端各写一套（这就是不在命令里出现双引号的原因）。
-    function buildWbPy(key, ids) {
-      var items = ids.map(function (k) {
-        var m = WB[k];
+    function buildWbPy(key, models) {
+      var items = models.map(function (m) {
         return "{'id':'" + m.id + "','name':'" + m.name + "','model':'" + m.id + "'," +
                "'vendor':'custom','provider':'custom'," +
                "'url':'https://api.moark.com/v1/chat/completions','apiKey':'" + key + "'," +
-               "'maxInputTokens':32768,'maxOutputTokens':8192,'supportsToolCall':True," +
-               "'supportsImages':" + m.img + ",'supportsReasoning':False,'temperature':0.7}";
+               "'maxInputTokens':32768,'maxOutputTokens':8192," +
+               "'supportsToolCall':" + (m.tool ? 'True' : 'False') + "," +
+               "'supportsImages':" + (m.img ? 'True' : 'False') + "," +
+               "'supportsReasoning':False,'temperature':0.7}";
       }).join(',');
-      var keep = "('" + ids.map(function (k) { return WB[k].id; }).join("','") + "',)";
+      var keep = "('" + models.map(function (m) { return m.id; }).join("','") + "',)";
       return "import json,pathlib;p=pathlib.Path.home()/'.workbuddy'/'models.json';" +
              "d=json.loads(p.read_text(encoding='utf-8')) if p.exists() else {'models':[]};" +
              "keep=" + keep + ";" +
@@ -1190,16 +1308,22 @@
              "p.write_text(json.dumps(d,ensure_ascii=False,indent=2),encoding='utf-8');" +
              "print('models.json updated:',p)";
     }
-    function wbPyCmd(key, ids) {
-      return (wbShell() === 'sh' ? 'python3' : 'python') + ' -c "' + buildWbPy(key, ids) + '"';
+    function wbPyCmd(key, models) {
+      return (wbShell() === 'sh' ? 'python3' : 'python') + ' -c "' + buildWbPy(key, models) + '"';
     }
     function writeWbCmd() {
       if (!cmdWbEl) return;
-      var k = tokenOrPlaceholder(), ids = wbIds();
-      var shown = k ? maskKey(k) : '在这里粘贴你的令牌';
-      cmdWbEl.textContent = wbPyCmd(shown, ids);
-      cmdWbEl.setAttribute('data-real', wbPyCmd(k || '在这里粘贴你的令牌', ids));
+      var k = tokenOrPlaceholder(), models = wbPicked();
       if (wbWarnEl) wbWarnEl.style.display = k ? 'none' : '';
+      if (!models.length) {
+        cmdWbEl.textContent = '（先在①里勾选至少一个模型，或填一个模型 ID）';
+        cmdWbEl.removeAttribute('data-real');
+        return;
+      }
+      var shown = k ? maskKey(k) : '在这里粘贴你的令牌';
+      cmdWbEl.textContent = wbPyCmd(shown, models);
+      // 真实命令放 data-real，点击复制时优先取它
+      cmdWbEl.setAttribute('data-real', wbPyCmd(k || '在这里粘贴你的令牌', models));
     }
     // 非 Windows 默认给 macOS · Linux 那一行，Windows 默认 PowerShell
     (function () {
@@ -1208,18 +1332,94 @@
         if (sh) sh.checked = true;
       }
     })();
-    $$('input[name="wbmodel"]').forEach(function (r) { r.addEventListener('change', writeWbCmd); });
     $$('input[name="wbshell"]').forEach(function (r) { r.addEventListener('change', writeWbCmd); });
     if (tokenEl) tokenEl.addEventListener('input', writeWbCmd);
+    // 手填的 ID 只留合法字符，免得把引号带进命令行
+    if (wbCustomEl) {
+      wbCustomEl.addEventListener('input', function () {
+        var v = wbCustomEl.value;
+        if (v && !WB_ID_OK.test(v.trim())) {
+          wbCustomEl.value = v.replace(/[^A-Za-z0-9._:\-]/g, '');
+        }
+        writeWbCmd();
+      });
+    }
+    if (wbCustomToolEl) wbCustomToolEl.addEventListener('change', writeWbCmd);
     writeWbCmd();
 
     var copyWbBtn = $('#copyWbBtn');
     if (copyWbBtn) {
       copyWbBtn.addEventListener('click', function () {
-        var t = cmdWbEl ? (cmdWbEl.getAttribute('data-real') || cmdWbEl.textContent.trim()) : '';
+        var t = cmdWbEl ? (cmdWbEl.getAttribute('data-real') || '') : '';
+        if (!t) { notify('先勾选一个模型', true); return; }
         copyText(t, '命令已复制 · 含真实令牌，粘进终端后请勿截屏');
       });
     }
+
+    /* 一键脚本：Windows 用 .bat（必须 CRLF），macOS 用 .command */
+    function wbScript(kind, key, models) {
+      var py = buildWbPy(key, models);
+      if (kind === 'bat') {
+        return [
+          '@echo off',
+          'setlocal',
+          'rem Install MetaX models into WorkBuddy. Generated by the course setup page.',
+          'python -c "' + py + '"',
+          'if errorlevel 1 goto fail',
+          'echo.',
+          'echo [OK] models.json updated.',
+          'echo Quit WorkBuddy completely (including the tray icon), then start it again.',
+          'pause',
+          'exit /b 0',
+          ':fail',
+          'echo.',
+          'echo [FAILED] Python 3 was not found, or the write failed.',
+          'echo Install Python 3 from python.org and run this file again.',
+          'pause',
+          'exit /b 1',
+          ''
+        ].join('\r\n');
+      }
+      return [
+        '#!/bin/bash',
+        '# Install MetaX models into WorkBuddy. Generated by the course setup page.',
+        'python3 -c "' + py + '"',
+        'if [ $? -ne 0 ]; then',
+        '  echo "[FAILED] python3 was not found, or the write failed."',
+        '  read -n 1 -s -r -p "Press any key to close."',
+        '  exit 1',
+        'fi',
+        'echo "[OK] models.json updated."',
+        'echo "Quit WorkBuddy completely, then start it again."',
+        'read -n 1 -s -r -p "Press any key to close."',
+        ''
+      ].join('\n');
+    }
+    // 写脚本 + 触发下载。第 4 步（选 WorkBuddy 时）和第 7 步共用这一个出口，
+    // 所以两条路写进去的东西完全一致，区别只有模型数量。
+    function wbSave(kind, k, models) {
+      if (!models.length) { notify('先选一个模型', true); return; }
+      if (!k) { notify('请先在 第 4 步 粘贴你的令牌', true); return; }
+      var text = wbScript(kind, k, models);
+      var name = kind === 'bat' ? 'install-metax-model.bat' : 'install-metax-model.command';
+      var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+        if (a.parentNode) a.parentNode.removeChild(a);
+      }, 5000);
+      notify('已下载 ' + name + ' · 里面含真实令牌，用完删掉');
+    }
+    function wbDownload(kind) { wbSave(kind, tokenOrPlaceholder(), wbPicked()); }
+    var dlBat = $('#dlBat'), dlSh = $('#dlSh');
+    if (dlBat) dlBat.addEventListener('click', function () { wbDownload('bat'); });
+    if (dlSh) dlSh.addEventListener('click', function () { wbDownload('sh'); });
+
 
     var copyAllBtn = $('#copyAllBtn');
     if (copyAllBtn) {
