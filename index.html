@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#159b73" />
-  <meta name="description" content="沐曦 Coding Agent 配置中心：10 分钟内把模力方舟 Token 接入 Codex / Claude Code / WorkBuddy，含新手分步向导、环境自检与排错手册。" />
-  <title>沐曦 Coding Agent 配置中心 · 新手版</title>
+  <meta name="description" content="Coding Agent 配置中心：10 分钟内把访问令牌接入 Codex / Claude Code / WorkBuddy，含新手分步向导、环境自检与排错手册。" />
+  <title>Coding Agent 配置中心 · 新手版</title>
   <style>
     :root { --green:#159b73; --green-dark:#087452; --green-soft:#e8f6f0; --purple:#7356c9; --purple-dark:#563ba8; --ink:#16181d; --muted:#6b7078; --line:#e5e4ea; --paper:#fff; --lavender:#f3f1fa; --warn:#b4530a; --warn-bg:#fff7ed; --danger:#c0392b; --danger-bg:#fef3f2; }
     * { box-sizing:border-box; }
@@ -253,7 +253,7 @@
   <div class="banner-mobile">⚠️ 检测到你在手机上打开本页。CLI 与 CC Switch 只能装在电脑上，请改用 <b>Windows / macOS / Linux 电脑</b>打开，配置才能生效。</div>
 
   <header class="nav">
-    <a class="brand" href="#top" aria-label="沐曦 Coding Agent 配置中心"><span class="brand-mark">M</span><span>沐曦 / CODING AGENT<small>METAX CONFIG LAB</small></span></a>
+    <a class="brand" href="#top" aria-label="Coding Agent 配置中心"><span class="brand-mark">C</span><span>CODING AGENT<small>CONFIG LAB</small></span></a>
     <nav class="navlinks">
       <a href="#step-token">① 拿 Token</a>
       <a href="#install-cli">② 装 CLI</a>
@@ -267,9 +267,9 @@
   <main id="top">
     <section class="wrap hero">
       <div>
-        <div class="eyebrow">METAX · 曦云 C 系列</div>
+        <div class="eyebrow">国产算力 · 模型服务</div>
         <h1>让国产算力，<br><em>直接进入</em>你的代码。</h1>
-        <p class="hero-copy">沐曦专属 Coding Agent 配置中心。把你的模力方舟访问令牌接进来，在熟悉的开发工具里直接调用编程模型。<b>本页按「七步」组织，完全没用过命令行的同学从上往下照着做即可。</b></p>
+        <p class="hero-copy">Coding Agent 配置中心。把你的访问令牌接进来，在熟悉的开发工具里直接调用编程模型。<b>本页按「七步」组织，完全没用过命令行的同学从上往下照着做即可。</b></p>
         <div class="hero-actions">
           <a class="button primary" href="#step-token">从第一步开始 <span>↓</span></a>
           <a class="button ghost" href="#faq">我卡住了 / 报错了</a>
@@ -319,15 +319,15 @@
 
       <div class="callout">
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 1.5 12.4 7l5.9.5-4.5 3.9 1.4 5.8L10 14.1 4.8 17.2l1.4-5.8L1.7 7.5 7.6 7z" fill="#159b73"/></svg>
-        <div>只有两件事要做：<b>① 登录模力方舟 → ② 生成一个访问令牌</b>。令牌生成后复制好，下一步就要用到。</div>
+        <div>只有两件事要做：<b>① 登录模型服务控制台 → ② 生成一个访问令牌</b>。令牌生成后复制好，下一步就要用到。</div>
       </div>
 
       <div class="steps" style="grid-template-columns:repeat(2,1fr)">
         <article class="step-card">
           <b>1 — 登录</b>
-          <h3>打开模力方舟并登录</h3>
-          <p>用你的账号登录模力方舟控制台。登录后即可在设置里管理访问令牌。</p>
-          <p style="margin-top:12px"><a class="button ghost sm" href="https://moark.com" target="_blank" rel="noreferrer">打开模力方舟 ↗</a></p>
+          <h3>打开模型服务控制台并登录</h3>
+          <p>用你的账号登录控制台。登录后即可在设置里管理访问令牌。</p>
+          <p style="margin-top:12px"><a class="button ghost sm" href="https://moark.com" target="_blank" rel="noreferrer">打开控制台 ↗</a></p>
         </article>
         <article class="step-card">
           <b>2 — 生成令牌</b>
@@ -439,7 +439,7 @@
       <div class="builder">
         <!-- LEFT -->
         <div class="panel">
-          <div class="panel-head"><h3>连接模力方舟</h3><span class="step">STEP 04</span></div>
+          <div class="panel-head"><h3>连接模型服务</h3><span class="step">STEP 04</span></div>
           <div class="panel-body">
             <div id="needSwitch" class="callout warn" style="margin-bottom:20px; align-items:flex-start">
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2 1.5 17h17z" fill="#b4530a"/><rect x="9.2" y="7.4" width="1.6" height="4.6" fill="#fff"/><rect x="9.2" y="13.2" width="1.6" height="1.6" fill="#fff"/></svg>
@@ -447,12 +447,12 @@
             </div>
 
             <div class="field">
-              <label for="token">模力方舟访问令牌</label>
+              <label for="token">访问令牌</label>
               <div class="secret-wrap">
                 <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="粘贴你的 API Token" />
                 <button class="toggle-secret" type="button" id="toggleSecret">显示</button>
               </div>
-              <p class="hint">从 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">模力方舟 → 工作台 → 设置 → 访问令牌</a> 获取。粘贴后可用下方「测试令牌」先验一下真伪。</p>
+              <p class="hint">从 <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">控制台 → 工作台 → 设置 → 访问令牌</a> 获取。粘贴后可用下方「测试令牌」先验一下真伪。</p>
             </div>
 
             <div class="keysafe">
@@ -479,7 +479,7 @@
                 <option value="Intern-S2">Intern-S2 · 256K 长文本</option>
                 <option value="__custom__">其他 —— 手动输入模型 ID…</option>
               </select>
-              <input id="modelCustom" type="text" spellcheck="false" placeholder="粘贴模力方舟控制台里的准确模型 ID" style="display:none;margin-top:8px" />
+              <input id="modelCustom" type="text" spellcheck="false" placeholder="粘贴控制台里的准确模型 ID" style="display:none;margin-top:8px" />
               <div class="model-card"><div><b id="modelName">Qwen3-Coder-30B-A3B-Instruct</b><span id="modelMeta">32K 上下文 · Function Calling · 实测 0.9 秒返回工具调用，第一课推荐</span></div></div>
               <p class="hint">模型名必须与控制台里<b>完全一致</b>（含大小写与后缀）。若启动后报 <code>model not found</code>，回到 <a href="https://moark.com/dashboard" target="_blank" rel="noreferrer">控制台</a> 复制准确 ID，选「其他」重新填写即可。</p>
             </div>
@@ -540,7 +540,7 @@
 
       <div class="steps">
         <article class="step-card"><b>01 — 重开终端</b><h3>关闭并重新打开终端</h3><p>新开的窗口才会加载最新的环境变量与配置。已开着的窗口改了配置也不会生效——这是最容易踩的坑。</p></article>
-        <article class="step-card"><b>02 — 启动工具</b><h3>运行 <code style="font-size:12px">codex</code> / <code style="font-size:12px">claude</code>，或打开 WorkBuddy</h3><p>终端里直接输入对应命令回车；WorkBuddy 则是打开客户端，在模型下拉里切到 <code style="font-size:12px">MetaX Qwen3-Coder-30B</code>。Claude Code 可用 <code style="font-size:12px">/model</code> 确认模型映射是否指向沐曦的模型。</p></article>
+        <article class="step-card"><b>02 — 启动工具</b><h3>运行 <code style="font-size:12px">codex</code> / <code style="font-size:12px">claude</code>，或打开 WorkBuddy</h3><p>终端里直接输入对应命令回车；WorkBuddy 则是打开客户端，在模型下拉里切到 <code style="font-size:12px">Qwen3-Coder-30B</code>。Claude Code 可用 <code style="font-size:12px">/model</code> 确认模型映射是否指向你配置的那个模型。</p></article>
         <article class="step-card"><b>03 — 发一句话</b><h3>输入「用 Python 写一个冒泡排序」</h3><p>能正常返回代码 = 配置成功。若报错，直接对照下方 FAQ 的报错信息排查。</p></article>
       </div>
 
@@ -667,7 +667,7 @@
         <details class="qa"><summary>接进去之后要注意什么？</summary><div class="qa-body">
           <ul>
             <li>模型下拉里看不到新模型：写完必须<b>完全退出</b>客户端再启动才会刷新（托盘图标也要退出）。</li>
-            <li>验证方法：切到「MetaX Qwen3-Coder-30B」，发一句「只回复两个字：在」，能回就说明链路通了。</li>
+            <li>验证方法：切到「Qwen3-Coder-30B」，发一句「只回复两个字：在」，能回就说明链路通了。</li>
             <li>想一次验全四项能力（对话 / 工具调用 / 流式 / 长上下文），仓库里有 <code>tools/check_workbuddy_model.py</code>。</li>
             <li>报 <code>不支持当前模型或算力</code>：这枚令牌绑定的资源包没覆盖这个模型，换回 Qwen3-Coder，或去平台加资源包。</li>
           </ul>
@@ -697,7 +697,7 @@
 
         <details class="qa"><summary>报错 <code>model not found</code> / <code>404</code> / <code>invalid model</code></summary><div class="qa-body">
           <ul>
-            <li>模型名与平台不一致。到模力方舟控制台的模型列表里<b>原样复制</b>模型 ID。</li>
+            <li>模型名与平台不一致。到控制台的模型列表里<b>原样复制</b>模型 ID。</li>
             <li>带 <code>-Preview</code> 后缀的模型属于预览版，可能已下线或改名为正式版，建议换成不带 Preview 的型号。</li>
             <li>选了资源包里<b>不包含</b>的模型。资源包只覆盖它列出的那些模型，换一个包内模型即可。</li>
             <li>回到第 4 步，模型下拉选「其他 —— 手动输入模型 ID」，粘贴准确名称重新导入。</li>
@@ -749,17 +749,17 @@
 
     <div class="wrap sources">
       <strong>参考来源：</strong>
-      <a href="https://moark.com/docs/integrations/Development-Tools/ccswitch" target="_blank" rel="noreferrer">CC Switch 快速配置文档（模力方舟官方）</a> ·
+      <a href="https://moark.com/docs/integrations/Development-Tools/ccswitch" target="_blank" rel="noreferrer">CC Switch 快速配置文档（平台官方文档）</a> ·
       <a href="https://moark.com/dashboard/tokens" target="_blank" rel="noreferrer">访问令牌管理</a> ·
       <a href="https://github.com/farion1231/cc-switch/releases/latest" target="_blank" rel="noreferrer">CC Switch Releases</a> ·
       <a href="https://ccswitch.io/en/docs?item=deeplink&section=faq" target="_blank" rel="noreferrer">CC Switch 深链接协议</a>
-      <div style="margin-top:10px">请求地址与认证字段来源于模力方舟官方文档；模型可用范围以模力方舟控制台实时列表为准。</div>
+      <div style="margin-top:10px">请求地址与认证字段来源于平台官方文档；模型可用范围以控制台实时列表为准。</div>
     </div>
   </main>
 
   <footer>
     <div class="wrap footer-inner">
-      <span>沐曦 × 模力方舟 · Coding Agent 配置中心</span>
+      <span>Coding Agent 配置中心 · 新手版</span>
       <span>API Key 不上传 · 配置在本地生成 · 本页不收集任何数据</span>
     </div>
   </footer>
@@ -862,7 +862,7 @@
     }
 
     /* ============ 路线图本地进度 ============ */
-    var LS_KEY = 'metax-config-progress-v1';
+    var LS_KEY = 'coding-agent-progress-v1';
     var progress = {};
     try { progress = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; } catch (e) { progress = {}; }
     function paintRoadmap() {
@@ -880,7 +880,7 @@
     paintRoadmap();
 
     /* ============ CC Switch 提示 ============ */
-    var SW_KEY = 'metax-switch-done-v1';
+    var SW_KEY = 'coding-agent-switch-done-v1';
     var needSwitch = $('#needSwitch'), switchDone = $('#switchDone');
     if (switchDone) {
       if (localStorage.getItem(SW_KEY) === '1' && needSwitch) needSwitch.style.display = 'none';
@@ -919,7 +919,7 @@
       if (metaEl) {
         metaEl.textContent = custom
           ? '手动填写的自定义模型 ID'
-          : (modelMetaMap[m] || '曦云 C 系列 · 对话模型');
+          : (modelMetaMap[m] || '对话模型');
       }
     }
 
@@ -944,7 +944,7 @@
           'preferred_auth_method = "apikey"',
           '',
           '[model_providers.moark]',
-          'name = "沐曦 / 模力方舟"',
+          'name = "Model Service"',
           'base_url = "' + endpoint.codex + '"',
           'wire_api = "responses"',
           'requires_openai_auth = true',
@@ -1115,7 +1115,7 @@
       var params = new URLSearchParams({
         resource: 'provider',
         app: t,
-        name: '沐曦 / 模力方舟',
+        name: 'Model Service',
         enabled: 'true',
         homepage: 'https://moark.com',
         endpoint: endpoint[t],
@@ -1132,7 +1132,7 @@
     function doImport() {
       if (!tokenEl.value.trim()) {
         tokenEl.focus();
-        notify('请先在第 4 步输入你的模力方舟访问令牌', true);
+        notify('请先在第 4 步输入你的访问令牌', true);
         return;
       }
       // WorkBuddy 没有 ccswitch 协议：直接给可双击运行的脚本，写的是同一份 models.json
@@ -1236,8 +1236,8 @@
     // name 一律用 ASCII：CMD 的默认代码页是 GBK，命令行里出现中文会把结尾的引号吃掉。
     // tool = 该模型是否支持工具调用（实测过，不支持的在页面上标红）。
     var WB_MODELS = [
-      { id: 'Qwen3-Coder-30B-A3B-Instruct', name: 'MetaX Qwen3-Coder-30B', sub: '写代码主力 · 工具调用正常，实测最快', tool: true, img: false, on: true },
-      { id: 'Qwen3-VL-30B-A3B-Instruct', name: 'MetaX Qwen3-VL (vision)', sub: '能识图 · 工具调用正常，平台侧偶发 502', tool: true, img: true, on: false },
+      { id: 'Qwen3-Coder-30B-A3B-Instruct', name: 'Qwen3-Coder-30B', sub: '写代码主力 · 工具调用正常，实测最快', tool: true, img: false, on: true },
+      { id: 'Qwen3-VL-30B-A3B-Instruct', name: 'Qwen3-VL (vision)', sub: '能识图 · 工具调用正常，平台侧偶发 502', tool: true, img: true, on: false },
       { id: 'GLM-5.3', name: 'GLM-5.3', sub: '能当 Agent，但响应慢、常返空正文', tool: true, img: false, on: false },
       { id: 'internlm3-8b-instruct', name: 'internlm3-8b', sub: '轻量快，接进来只能纯聊天', tool: false, img: false, on: false },
       { id: 'InternVL3-78B', name: 'InternVL3-78B', sub: '视觉对话，接进来只能纯聊天', tool: false, img: true, on: false },
@@ -1363,7 +1363,7 @@
         return [
           '@echo off',
           'setlocal',
-          'rem Install MetaX models into WorkBuddy. Generated by the course setup page.',
+          'rem Install custom models into WorkBuddy. Generated by the course setup page.',
           'python -c "' + py + '"',
           'if errorlevel 1 goto fail',
           'echo.',
@@ -1382,7 +1382,7 @@
       }
       return [
         '#!/bin/bash',
-        '# Install MetaX models into WorkBuddy. Generated by the course setup page.',
+        '# Install custom models into WorkBuddy. Generated by the course setup page.',
         'python3 -c "' + py + '"',
         'if [ $? -ne 0 ]; then',
         '  echo "[FAILED] python3 was not found, or the write failed."',
@@ -1401,7 +1401,7 @@
       if (!models.length) { notify('先选一个模型', true); return; }
       if (!k) { notify('请先在 第 4 步 粘贴你的令牌', true); return; }
       var text = wbScript(kind, k, models);
-      var name = kind === 'bat' ? 'install-metax-model.bat' : 'install-metax-model.command';
+      var name = kind === 'bat' ? 'install-model.bat' : 'install-model.command';
       var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
