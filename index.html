@@ -564,15 +564,15 @@
       </div>
       <p class="hint" style="margin:-8px 0 14px">不确定自己开的是哪个？看窗口提示符：<b>开头带 <code>PS</code> 的是 PowerShell</b>，不带的是 CMD。选错了命令会报「文件名、目录名或卷标语法不正确」。</p>
 
-      <div class="cli-cmd" data-os="any"><span class="os">① 下载项目</span><code data-copy id="cmdClone">git clone https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp.git</code><span class="copyic">复制</span></div>
-      <div class="cli-cmd" data-os="any"><span class="os">② 进目录并写入你的 Key</span><code data-copy id="cmdKey">cd MetaX-Coding-Agent-Bootcamp/lesson-02-chibi-game/lab ; python -c "import json,shutil;shutil.copy('config.example.json','config.json');d=json.load(open('config.json',encoding='utf-8'));d['api_key']='在这里粘贴你的令牌';open('config.json','w',encoding='utf-8').write(json.dumps(d,ensure_ascii=False,indent=2));print('已写入 config.json')"</code><span class="copyic">复制</span></div>
+      <div class="cli-cmd" data-os="any"><span class="os">① 下载项目</span><code data-copy id="cmdClone">git clone https://www.gitlink.org.cn/ccf-ai-infra/Coding-Agent-Bootcamp.git</code><span class="copyic">复制</span></div>
+      <div class="cli-cmd" data-os="any"><span class="os">② 进目录并写入你的 Key</span><code data-copy id="cmdKey">cd Coding-Agent-Bootcamp/lesson-02-chibi-game/lab ; python -c "import json,shutil;shutil.copy('config.example.json','config.json');d=json.load(open('config.json',encoding='utf-8'));d['api_key']='在这里粘贴你的令牌';open('config.json','w',encoding='utf-8').write(json.dumps(d,ensure_ascii=False,indent=2));print('已写入 config.json')"</code><span class="copyic">复制</span></div>
       <div class="cli-cmd" data-os="any"><span class="os">③ 启动并打开</span><code data-copy id="cmdRun">python server.py</code><span class="copyic">复制</span></div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 10px">
         <button class="button primary sm" id="copyAllBtn" type="button">⧉ 一键复制这三行</button>
-        <a class="button ghost sm" href="https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp" target="_blank" rel="noreferrer">不想用 git？去仓库页下载 ZIP ↗</a>
+        <a class="button ghost sm" href="https://www.gitlink.org.cn/ccf-ai-infra/Coding-Agent-Bootcamp" target="_blank" rel="noreferrer">不想用 git？去仓库页下载 ZIP ↗</a>
       </div>
-      <p class="hint" style="margin:0 0 12px">GitLink 的 ZIP 要先登录才能下载：打开仓库页，点右上角「克隆/下载」即可。不登录也能用上面的 <code>git clone</code>。</p>
+      <p class="hint" style="margin:0 0 12px">GitLink 的 ZIP 要先登录才能下载：打开仓库页，点右上角「克隆/下载」即可。不登录也能用上面的 <code>git clone</code>。用 ZIP 的话，解压出来的目录名可能带 <code>-master</code> 后缀，第 ② 行的 <code>cd</code> 按实际目录名改一下。</p>
 
       <p class="hint" id="projHint">
         执行完第 ③ 行，浏览器打开 <b id="projUrl">http://127.0.0.1:8848</b> 就能看到项目跑起来了。
@@ -629,7 +629,7 @@
         <div class="cli-cmd" data-os="any" style="margin-top:4px"><span class="os">写入 WorkBuddy 自定义模型</span><code data-copy id="cmdWb">python -c "..."</code><span class="copyic">复制</span></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 8px">
           <button class="button ghost sm" id="copyWbBtn" type="button">⧉ 复制这条命令</button>
-          <a class="button ghost sm" href="https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp/tree/master/docs/workbuddy-model.md" target="_blank" rel="noreferrer">手动配置步骤与排错 ↗</a>
+          <a class="button ghost sm" href="https://www.gitlink.org.cn/ccf-ai-infra/Coding-Agent-Bootcamp/tree/master/docs/workbuddy-model.md" target="_blank" rel="noreferrer">手动配置步骤与排错 ↗</a>
         </div>
         <p class="hint" style="margin:0">
           命令里的令牌在页面上是 <code>A1b2••••••••9Zk3</code> 这样的遮蔽形，点复制才把完整值写进剪贴板。
@@ -1211,8 +1211,8 @@
     // 两种终端没有统一写法（&& 在 PowerShell 5.1 里不可用），所以分开生成。
     function cdJoin(p) {
       if (shellType() === 'cmd')
-        return 'cd /d MetaX-Coding-Agent-Bootcamp\\' + p.dir.split('/').join('\\') + '\\lab && ';
-      return 'cd MetaX-Coding-Agent-Bootcamp/' + p.dir + '/lab; ';
+        return 'cd /d Coding-Agent-Bootcamp\\' + p.dir.split('/').join('\\') + '\\lab && ';
+      return 'cd Coding-Agent-Bootcamp/' + p.dir + '/lab; ';
     }
     function writeCmd() {
       var p = currentProj(), k = tokenOrPlaceholder();
@@ -1428,7 +1428,7 @@
         var cm = shellType() === 'cmd' ? 'rem ' : '# ';
         var txt = [
           cm + '① 下载课程仓库（已经下载过就跳过这行）',
-          'git clone https://www.gitlink.org.cn/Dryoung/MetaX-Coding-Agent-Bootcamp.git',
+          'git clone https://www.gitlink.org.cn/ccf-ai-infra/Coding-Agent-Bootcamp.git',
           '',
           cm + '② 进入「' + p.name + '」目录，生成 config.json 并写进你的 Key',
           (cmdKeyEl ? (cmdKeyEl.getAttribute('data-real') || cmdKeyEl.textContent.trim()) : ''),
