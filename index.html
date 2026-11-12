@@ -468,14 +468,13 @@
               <label for="model">选择模型</label>
               <select id="model">
                 <option value="Qwen3-Coder-30B-A3B-Instruct">Qwen3-Coder-30B-A3B-Instruct · 编程（实测最快，推荐）</option>
-                <option value="GLM-5.3">GLM-5.3 · 长文本强，但单次响应实测 500 秒以上</option>
+                <option value="GLM-5.3">GLM-5.3 · 长文本强，推理链吃时间，实测 9~15 秒</option>
                 <option value="Qwen3.6-35B-A3B">Qwen3.6-35B-A3B · Function Calling</option>
                 <option value="Qwen3.6-27B">Qwen3.6-27B · Function Calling</option>
-                <option value="Qwen3-VL-30B-A3B-Instruct">Qwen3-VL-30B-A3B-Instruct · 视觉多模态</option>
                 <option value="InternVL3-78B">InternVL3-78B · 视觉多模态</option>
                 <option value="InternVL3-38B">InternVL3-38B · 视觉多模态</option>
                 <option value="internlm3-8b-instruct">InternLM3-8B-Instruct · 轻量免费</option>
-                <option value="Atria-Dawn">Atria-Dawn · 长文本</option>
+                <option value="Atria-Dawn-Free">Atria-Dawn-Free · 长文本</option>
                 <option value="Intern-S2">Intern-S2 · 256K 长文本</option>
                 <option value="__custom__">其他 —— 手动输入模型 ID…</option>
               </select>
@@ -657,8 +656,9 @@
           <ul>
             <li>WorkBuddy 每次对话都会带上工具定义，要求模型支持 <code>tools</code> 参数。<b>平台只给部分模型开了工具解析</b>，没开的会回
                 <code>"auto" tool choice requires --enable-auto-tool-choice and --tool-call-parser</code>。</li>
-            <li>实测（2026-11-03）：<code>Qwen3-Coder-30B</code>、<code>Qwen3-VL-30B</code>、<code>GLM-5.3</code> 可以；
-                <code>internlm3-8b-instruct</code>、<code>InternVL3-78B</code>、<code>Fin-R1</code>、<code>HY-MT2-7B</code>、<code>Qwen3-8B</code> 不行。</li>
+            <li>实测（2026-11-12）：<code>Qwen3-Coder-30B</code>、<code>GLM-5.3</code>、<code>Atria-Dawn-Free</code>（走 Anthropic 端点）可以；
+                <code>internlm3-8b-instruct</code>、<code>InternVL3-78B</code>、<code>Fin-R1</code>、<code>HY-MT2-7B</code>、<code>Qwen3-8B</code> 不行。
+                原 <code>Qwen3-VL-30B</code> 也能，但平台已将其停用（400）。</li>
             <li>标了也能勾：勾上后写进去的是 <code>supportsToolCall: False</code>，它以纯聊天模型出现在下拉里，不能干活但能对话。</li>
             <li>反悔了：在 <code>~/.workbuddy/models.json</code> 里删掉那一段，或重跑一次脚本、只勾能用的。</li>
           </ul>
@@ -781,7 +781,7 @@
       workbuddy: 'https://api.moark.com/v1/chat/completions'
     };
     // 实测能被 WorkBuddy 当 Agent 用的模型（每次对话都带 tools，没开解析的会 400）
-    var WB_TOOL_OK = ['Qwen3-Coder-30B-A3B-Instruct', 'Qwen3-VL-30B-A3B-Instruct', 'GLM-5.3'];
+    var WB_TOOL_OK = ['Qwen3-Coder-30B-A3B-Instruct', 'GLM-5.3'];
     var toolLabel = { codex: 'Codex', claude: 'Claude Code', workbuddy: 'WorkBuddy' };
     var fileName = { codex: 'config.toml', claude: 'settings.json', workbuddy: 'models.json' };
 
@@ -892,15 +892,14 @@
 
     /* ============ 模型 ============ */
     var modelMetaMap = {
-      'GLM-5.3': '128K 上下文 · 1M 缓存 · ⚠ 单次响应实测 500 秒以上，容易超时',
+      'GLM-5.3': '128K 上下文 · 1M 缓存 · 推理链吃时间，实测 9~15 秒，偶发空正文',
       'Qwen3-Coder-30B-A3B-Instruct': '32K 上下文 · Function Calling · 实测 0.9 秒返回工具调用，第一课推荐',
       'Qwen3.6-35B-A3B': '64K 上下文 · Function Calling · 视觉理解',
       'Qwen3.6-27B': '64K 上下文 · Function Calling · 视觉理解',
-      'Qwen3-VL-30B-A3B-Instruct': '32K 上下文 · Function Calling · 视觉多模态',
       'InternVL3-78B': '32K 上下文 · 视觉多模态',
       'InternVL3-38B': '32K 上下文 · 视觉多模态',
       'internlm3-8b-instruct': '32K 上下文 · 轻量免费 · 通用对话',
-      'Atria-Dawn': '256K 上下文 · 长文本 · 思维链较长，适合长文档理解',
+      'Atria-Dawn-Free': '256K 上下文 · 长文本 · 2026-11-12 实测 2.4 秒返回工具调用',
       'Intern-S2': '256K 上下文 · 长文本 · 科研预览'
     };
     function currentModel() {
@@ -1237,8 +1236,7 @@
     // tool = 该模型是否支持工具调用（实测过，不支持的在页面上标红）。
     var WB_MODELS = [
       { id: 'Qwen3-Coder-30B-A3B-Instruct', name: 'Qwen3-Coder-30B', sub: '写代码主力 · 工具调用正常，实测最快', tool: true, img: false, on: true },
-      { id: 'Qwen3-VL-30B-A3B-Instruct', name: 'Qwen3-VL (vision)', sub: '能识图 · 工具调用正常，平台侧偶发 502', tool: true, img: true, on: false },
-      { id: 'GLM-5.3', name: 'GLM-5.3', sub: '能当 Agent，但响应慢、常返空正文', tool: true, img: false, on: false },
+      { id: 'GLM-5.3', name: 'GLM-5.3', sub: '能当 Agent，推理链吃时间，偶发空正文', tool: true, img: false, on: false },
       { id: 'internlm3-8b-instruct', name: 'internlm3-8b', sub: '轻量快，接进来只能纯聊天', tool: false, img: false, on: false },
       { id: 'InternVL3-78B', name: 'InternVL3-78B', sub: '视觉对话，接进来只能纯聊天', tool: false, img: true, on: false },
       { id: 'Qwen3-8B', name: 'Qwen3-8B', sub: '小模型，当前算力不支持 tools', tool: false, img: false, on: false }
